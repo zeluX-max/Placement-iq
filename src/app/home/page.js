@@ -70,7 +70,7 @@ export default function HomePage() {
 
       <main>
         {/* Hero Section with Animated Background */}
-        <section className="relative px-4 pt-32 md:pt-48 pb-20 md:pb-32 max-w-6xl mx-auto text-center overflow-hidden animate-gradient-bg bg-linear-to-b from-gray-950 via-purple-950/10 to-gray-950">
+        <section className="relative px-4 pt-32 md:pt-48 pb-20 md:pb-32 max-w-6xl mx-auto text-center overflow-hidden animate-gradient-bg bg-gradient-to-b from-gray-950 via-purple-950/10 to-gray-950">
           {/* Floating Blobs */}
 
           <div className="absolute inset-0 -z-10 pointer-events-none">
@@ -212,7 +212,7 @@ export default function HomePage() {
               </div>
               
               {!showAllCompanies && uniqueCompanies.length > 24 && (
-                <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-gray-950 via-transparent to-transparent pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-950 via-transparent to-transparent pointer-events-none"></div>
               )}
             </div>
 
@@ -278,7 +278,7 @@ export default function HomePage() {
         </section>
 
         {/* Dynamic Final CTA */}
-        <section className="px-4 py-32 bg-linear-to-b from-gray-950 to-gray-900 flex flex-col items-center">
+        <section className="px-4 py-32 bg-gradient-to-b from-gray-950 to-gray-900 flex flex-col items-center">
           <div className="max-w-2xl text-center">
             <h2 className="text-4xl md:text-6xl font-bold mb-8 tracking-tight">Ready to find out where you stand?</h2>
             <p className="text-gray-400 text-lg mb-12 max-w-md mx-auto leading-relaxed">Free for all NIT Jalandhar students during HackMol 7.0. Analyze your profile in under 60 seconds.</p>
