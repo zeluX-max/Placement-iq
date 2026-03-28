@@ -112,6 +112,7 @@ export async function analyzeProfile(studentProfile, companies) {
     Company Database:
     ${JSON.stringify(companies)}
     Analyze and return ONLY valid JSON. 
+    Keep response under 200 tokens. Be extremely concise.
     LIMIT the 'ready' array to a maximum of 3 companies. 
     LIMIT the 'stretch' array to a maximum of 2 companies
     Analyze and return ONLY valid JSON, no markdown:
@@ -166,6 +167,7 @@ export async function generateStudyPlan(studentProfile, gapAnalysis) {
     Generate a personalized study plan. 
     LIMIT the plan to 2 weeks instead of 4. 
     LIMIT the 'tasks' array to exactly 2 high-level tasks per week. 
+    Keep response under 200 tokens. Be extremely concise.
     Keep task descriptions under 10 words. Return ONLY valid JSON:
     {
       "totalHours": 0,
