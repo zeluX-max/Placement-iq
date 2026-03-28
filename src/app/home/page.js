@@ -153,7 +153,7 @@ export default function HomePage() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-2xl md:text-3xl font-bold mb-4">What you get</h2>
-              <p className="text-gray-500 text-sm">Everything you need to land your dream job at NITJ</p>
+              <p className="text-gray-500 text-sm">Everything you need to land your dream job from NITJ</p>
             </div>
 
             <motion.div
