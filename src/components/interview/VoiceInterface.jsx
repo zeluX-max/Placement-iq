@@ -1,12 +1,21 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useConversation } from '@elevenlabs/react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function VoiceInterface({ onInterviewEnd }) {
+  const [status, setStatus] = useState('idle')
   const [transcript, setTranscript] = useState([])
-  const [status, setStatus] = useState('idle') // idle, interviewing
+  
+  // THE FIX: We use a Ref to shadow the state. This completely prevents the 
+  // "Stale Closure" bug inside the onDisconnect callback, while still letting 
+  // you use standard React state for the transcript!
+  const latestTranscript = useRef([])
+
+  useEffect(() => {
+    latestTranscript.current = transcript
+  }, [transcript])
 
   const conversation = useConversation({
     onConnect: () => {
@@ -16,32 +25,47 @@ export default function VoiceInterface({ onInterviewEnd }) {
     onDisconnect: () => {
       console.log('Disconnected from ElevenLabs')
       setStatus('idle')
-      onInterviewEnd(transcript)
+      // Send the absolute latest data from the Ref
+      onInterviewEnd(latestTranscript.current)
     },
     onMessage: (message) => {
-      console.log('Message received:', message)
-      setTranscript((prev) => [
-        ...prev,
-        { role: message.source === 'user' ? 'user' : 'ai', text: message.message },
-      ])
+      console.log('ElevenLabs Message:', message)
+      
+      // Defensive fallback just in case ElevenLabs changes their object keys
+      const role = message.source === 'user' ? 'user' : 'ai'
+      const text = message.message || message.text || ''
+      
+      if (text.trim() !== '') {
+        setTranscript((prev) => [...prev, { role, text }])
+      }
     },
     onError: (error) => {
       console.error('ElevenLabs Error:', error)
       setStatus('idle')
+      alert('Lost connection to the AI interviewer. Please try again.')
     },
   })
 
   const startInterview = useCallback(async () => {
     try {
-      // Request microphone permission first
+      // 1. Request microphone access first
       await navigator.mediaDevices.getUserMedia({ audio: true })
       
+      // 2. Clear previous transcript
+      setTranscript([])
+      latestTranscript.current = []
+      
+      // 3. Ensure the Environment Variable actually exists
+      if (!process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID) {
+        throw new Error('Missing ElevenLabs Agent ID in .env file')
+      }
+
       await conversation.startSession({
         agentId: process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID,
       })
     } catch (error) {
       console.error('Failed to start interview:', error)
-      alert('Failed to access microphone or connect to AI. Please check permissions.')
+      alert(error.message || 'Failed to access microphone. Please check permissions.')
     }
   }, [conversation])
 

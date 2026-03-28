@@ -57,38 +57,41 @@ export default function ReportCard({ feedback }) {
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
             <div className="px-5 pb-5 pt-2 space-y-4 border-t border-gray-800/50">
-              {/* What Was Good */}
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2 text-green-400">
-                  <CheckCircle2 size={14} />
-                  <span className="text-xs font-semibold uppercase tracking-wider">What was good</span>
-                </div>
-                <p className="text-sm text-gray-300 leading-relaxed pl-6">
-                  {feedback.whatWasGood}
-                </p>
-              </div>
+             {/* What Was Good */}
+<div className="space-y-1.5">
+  <div className="flex items-center gap-2 text-green-400">
+    <CheckCircle2 size={14} />
+    <span className="text-xs font-semibold uppercase tracking-wider">What was good</span>
+  </div>
+  <p className="text-sm text-gray-300 leading-relaxed pl-6">
+    {/* ADDED FALLBACKS */}
+    {feedback.whatWasGood || feedback.good || feedback.strengths || 'The AI did not note any specific strengths for this answer.'}
+  </p>
+</div>
 
-              {/* What Was Missing */}
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2 text-red-400">
-                  <XCircle size={14} />
-                  <span className="text-xs font-semibold uppercase tracking-wider">What was missing</span>
-                </div>
-                <p className="text-sm text-gray-300 leading-relaxed pl-6">
-                  {feedback.whatWasMissing}
-                </p>
-              </div>
+{/* What Was Missing */}
+<div className="space-y-1.5">
+  <div className="flex items-center gap-2 text-red-400">
+    <XCircle size={14} />
+    <span className="text-xs font-semibold uppercase tracking-wider">What was missing</span>
+  </div>
+  <p className="text-sm text-gray-300 leading-relaxed pl-6">
+    {/* ADDED FALLBACKS */}
+    {feedback.whatWasMissing || feedback.missing || feedback.weaknesses || 'The AI did not note any specific missing elements.'}
+  </p>
+</div>
 
-              {/* Ideal Answer */}
-              <div className="space-y-1.5 p-3 rounded-lg bg-gray-800/50 border border-gray-700/50">
-                <div className="flex items-center gap-2 text-amber-400">
-                  <Lightbulb size={14} />
-                  <span className="text-xs font-semibold uppercase tracking-wider">Strategic Advice / Ideal Approach</span>
-                </div>
-                <p className="text-sm text-gray-400 italic leading-relaxed">
-                  {feedback.idealAnswer}
-                </p>
-              </div>
+{/* Ideal Answer */}
+<div className="space-y-1.5 p-3 rounded-lg bg-gray-800/50 border border-gray-700/50">
+  <div className="flex items-center gap-2 text-amber-400">
+    <Lightbulb size={14} />
+    <span className="text-xs font-semibold uppercase tracking-wider">Strategic Advice / Ideal Approach</span>
+  </div>
+  <p className="text-sm text-gray-400 italic leading-relaxed">
+    {/* ADDED FALLBACKS */}
+    {feedback.idealAnswer || feedback.advice || feedback.idealApproach || 'Review standard STAR method responses for this type of question.'}
+  </p>
+</div>
             </div>
           </motion.div>
         )}
