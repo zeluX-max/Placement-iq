@@ -1,24 +1,29 @@
 <!-- BEGIN:nextjs-agent-rules -->
+
 # This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
+
 <!-- END:nextjs-agent-rules -->
 
-
 # PlacementIQ — Antigravity Agent Instructions
+
 # NIT Jalandhar · HackMol 7.0
 
 ## Project Overview
+
 Next.js 15 app · JavaScript (JSX) · pnpm · Tailwind CSS
 Gemini 2.5 Flash API · Supabase (@supabase/ssr) · App Router at src/app/
 Campus placement intelligence tool for NIT Jalandhar students.
 
 ## How to Use This File
+
 Tell Antigravity: "Execute Phase X from GEMINI.md"
 Wait for completion and verify before moving to next phase.
 Use Fast mode for all phases.
 
 ## Agent Rules
+
 - Always use JavaScript (.jsx for components, .js for utilities)
 - Never use TypeScript
 - Never run pnpm dev autonomously
@@ -30,33 +35,38 @@ Use Fast mode for all phases.
 - Confirm each file is complete before moving to next
 
 ## Supabase Package (IMPORTANT)
+
 Using @supabase/ssr — NOT @supabase/auth-helpers-nextjs
+
 - Browser client: createBrowserClient from @supabase/ssr
 - Server client: createServerClient from @supabase/ssr
 - Middleware: createServerClient from @supabase/ssr
 - Never import from @supabase/auth-helpers-nextjs anywhere
 
 ## JavaScript Rules
+
 - Use 'use client' directive on all interactive components
 - Use regular function components
 - PropTypes are optional — skip for hackathon speed
 - Use @/ alias for all imports
 
 ## Pre-created Files (DO NOT recreate)
-- src/data/companies.js        — 53 company NITJ database
-- src/data/skills.js           — skills checklist by category
-- src/lib/gemini.js            — Gemini helper functions
-- src/lib/pdfToBase64.js       — PDF to base64 converter
-- src/lib/parseJson.js         — safe JSON parser
-- src/lib/supabase.js          — Supabase browser client
-- src/lib/supabase-server.js   — Supabase server client
-- src/hooks/useUser.js         — current user hook
-- src/hooks/useProfile.js      — saved profile hook
-- middleware.js                — route protection
-- src/app/layout.jsx           — root layout
-- src/app/globals.css          — global styles
+
+- src/data/companies.js — 53 company NITJ database
+- src/data/skills.js — skills checklist by category
+- src/lib/gemini.js — Gemini helper functions
+- src/lib/pdfToBase64.js — PDF to base64 converter
+- src/lib/parseJson.js — safe JSON parser
+- src/lib/supabase.js — Supabase browser client
+- src/lib/supabase-server.js — Supabase server client
+- src/hooks/useUser.js — current user hook
+- src/hooks/useProfile.js — saved profile hook
+- middleware.js — route protection
+- src/app/layout.jsx — root layout
+- src/app/globals.css — global styles
 
 ## Environment Variables
+
 GEMINI_API_KEY
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -64,6 +74,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY
 ## Design System (apply to ALL components)
 
 ### Colors
+
 - Page bg: bg-gray-950
 - Card bg: bg-gray-900
 - Card border: border border-gray-800
@@ -77,6 +88,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY
 - Hints: text-gray-500
 
 ### Typography
+
 - Page title: text-2xl md:text-3xl font-medium
 - Section title: text-lg md:text-xl font-medium
 - Card title: text-sm font-medium
@@ -84,12 +96,14 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY
 - Label/hint: text-xs text-gray-500
 
 ### Spacing
+
 - Page padding: px-4 md:px-8
 - Section: py-8 md:py-12
 - Card: p-4 md:p-6
 - Gap: gap-3 md:gap-4
 
 ### Components
+
 - Cards: rounded-xl border border-gray-800 bg-gray-900
 - Buttons: rounded-lg min-h-[44px]
 - Inputs: rounded-lg border border-gray-700 bg-gray-800 text-white
@@ -98,12 +112,14 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY
   px-4 py-3 rounded-lg text-sm font-medium w-full md:w-auto
 
 ### Animations (Framer Motion)
+
 - Card entrance: initial opacity-0 y-16, animate opacity-1 y-0
 - Duration: 0.3s ease-out
 - Stagger: 0.08s between children
 - Progress bars: spring animation on width
 
 ### Mobile-First Rules
+
 - ALWAYS write base styles for mobile first
 - Use md: prefix to override for desktop
 - Single column default → multi column at md:
@@ -115,25 +131,28 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY
 ---
 
 ## PHASE 0 — MANUAL FILES
+
 ### Create these by hand before running any Antigravity phase
 
 ### src/lib/supabase.js
+
 ```js
-import { createBrowserClient } from '@supabase/ssr'
+import { createBrowserClient } from "@supabase/ssr";
 
 export const supabase = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+);
 ```
 
 ### src/lib/supabase-server.js
+
 ```js
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 
 export async function supabaseServer() {
-  const cookieStore = await cookies()
+  const cookieStore = await cookies();
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -141,28 +160,29 @@ export async function supabaseServer() {
     {
       cookies: {
         getAll() {
-          return cookieStore.getAll()
+          return cookieStore.getAll();
         },
         setAll(cookiesToSet) {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
+              cookieStore.set(name, value, options),
+            );
           } catch {}
-        }
-      }
-    }
-  )
+        },
+      },
+    },
+  );
 }
 ```
 
 ### middleware.js (root of project)
+
 ```js
-import { createServerClient } from '@supabase/ssr'
-import { NextResponse } from 'next/server'
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse } from "next/server";
 
 export async function middleware(req) {
-  let supabaseResponse = NextResponse.next({ request: req })
+  let supabaseResponse = NextResponse.next({ request: req });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -170,112 +190,117 @@ export async function middleware(req) {
     {
       cookies: {
         getAll() {
-          return req.cookies.getAll()
+          return req.cookies.getAll();
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) =>
-            req.cookies.set(name, value)
-          )
-          supabaseResponse = NextResponse.next({ request: req })
+            req.cookies.set(name, value),
+          );
+          supabaseResponse = NextResponse.next({ request: req });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
-        }
-      }
-    }
-  )
+            supabaseResponse.cookies.set(name, value, options),
+          );
+        },
+      },
+    },
+  );
 
-  const { data: { session } } = await supabase.auth.getSession()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  const protectedRoutes = ['/', '/results', '/interview']
-  const isProtected = protectedRoutes.some(route =>
-    req.nextUrl.pathname.startsWith(route)
-  )
+  const protectedRoutes = ["/", "/results", "/interview"];
+  const isProtected = protectedRoutes.some((route) =>
+    req.nextUrl.pathname.startsWith(route),
+  );
 
   if (!session && isProtected) {
-    return NextResponse.redirect(new URL('/login', req.url))
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  return supabaseResponse
+  return supabaseResponse;
 }
 
 export const config = {
-  matcher: ['/', '/results', '/interview/:path*']
-}
+  matcher: ["/", "/results", "/interview/:path*"],
+};
 ```
 
 ### src/hooks/useUser.js
+
 ```js
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 export function useUser() {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user)
-      setLoading(false)
-    })
+      setUser(data.user);
+      setLoading(false);
+    });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null)
-      }
-    )
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
 
-    return () => subscription.unsubscribe()
-  }, [])
+    return () => subscription.unsubscribe();
+  }, []);
 
-  return { user, loading }
+  return { user, loading };
 }
 ```
 
 ### src/hooks/useProfile.js
+
 ```js
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
-import { useUser } from './useUser'
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { useUser } from "./useUser";
 
 export function useProfile() {
-  const { user } = useUser()
-  const [profile, setProfile] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const { user } = useUser();
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return
+    if (!user) return;
     supabase
-      .from('students')
-      .select('*')
-      .eq('user_id', user.id)
+      .from("students")
+      .select("*")
+      .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
-        setProfile(data)
-        setLoading(false)
-      })
-  }, [user])
+        setProfile(data);
+        setLoading(false);
+      });
+  }, [user]);
 
-  return { profile, loading }
+  return { profile, loading };
 }
 ```
 
 ### src/app/layout.jsx
-```jsx
-import { Inter } from 'next/font/google'
-import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+```jsx
+import { Inter } from "next/font/google";
+import "./globals.css";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: 'PlacementIQ — NIT Jalandhar',
-  description: 'Campus placement intelligence for NITJ students',
-}
+  title: "PlacementIQ — NIT Jalandhar",
+  description: "Campus placement intelligence for NITJ students",
+};
 
 export const viewport = {
-  width: 'device-width',
+  width: "device-width",
   initialScale: 1,
-}
+};
 
 export default function RootLayout({ children }) {
   return (
@@ -284,14 +309,16 @@ export default function RootLayout({ children }) {
         {children}
       </body>
     </html>
-  )
+  );
 }
 ```
 
 ---
 
 ## PHASE 1 — AUTH PAGES
+
 ### Tell Antigravity: "Execute Phase 1 from GEMINI.md"
+
 ### Files to build: 2
 
 1. src/app/login/page.jsx
@@ -321,6 +348,7 @@ export default function RootLayout({ children }) {
    - Redirect to requestUrl.origin on success
 
 ### Verify Phase 1:
+
 - Visit /login — see login form
 - Toggle between sign in and sign up works
 - Sign up creates account in Supabase dashboard
@@ -329,7 +357,9 @@ export default function RootLayout({ children }) {
 ---
 
 ## PHASE 2 — API ROUTES
+
 ### Tell Antigravity: "Execute Phase 2 from GEMINI.md"
+
 ### Files to build: 5
 
 1. src/app/api/parse-profile/route.js
@@ -386,6 +416,7 @@ export default function RootLayout({ children }) {
    - Return Response.json(report)
 
 ### Verify Phase 2:
+
 - Test /api/parse-profile returns profile JSON
 - Test /api/analyze returns gapAnalysis + studyPlan
 - All routes return proper error on failure
@@ -393,7 +424,9 @@ export default function RootLayout({ children }) {
 ---
 
 ## PHASE 3 — INPUT COMPONENTS
+
 ### Tell Antigravity: "Execute Phase 3 from GEMINI.md"
+
 ### Files to build: 4
 
 1. src/components/input/InputToggle.jsx
@@ -445,6 +478,7 @@ export default function RootLayout({ children }) {
    - Submit: builds profile object, calls onProfileReady
 
 ### Verify Phase 3:
+
 - Toggle switches between 3 modes correctly
 - PDF upload shows preview after parsing
 - Manual form collects all fields
@@ -452,7 +486,9 @@ export default function RootLayout({ children }) {
 ---
 
 ## PHASE 4 — DASHBOARD COMPONENTS
+
 ### Tell Antigravity: "Execute Phase 4 from GEMINI.md"
+
 ### Files to build: 5
 
 1. src/components/dashboard/SkillBadge.jsx
@@ -501,6 +537,7 @@ export default function RootLayout({ children }) {
    - Empty state if section has no companies
 
 ### Verify Phase 4:
+
 - SkillBadge shows green/red correctly
 - CompanyBoard shows 3 color-coded sections
 - CompanyCard expands topper tip on click
@@ -509,7 +546,9 @@ export default function RootLayout({ children }) {
 ---
 
 ## PHASE 5 — PLAN + LEADERBOARD
+
 ### Tell Antigravity: "Execute Phase 5 from GEMINI.md"
+
 ### Files to build: 3
 
 1. src/components/plan/WeeklyPlan.jsx
@@ -527,11 +566,11 @@ export default function RootLayout({ children }) {
 
 2. src/components/plan/ProgressTracker.jsx
    - Props: tasks[], planId
-   - Load checked from localStorage key: placementiq_${planId}
+   - Load checked from localStorage key: placementiq\_${planId}
    - Each task: checkbox + task text (line-through when checked)
    - Checkbox: min-w-[20px] min-h-[20px] cursor-pointer
    - MOBILE: py-3 min-h-[44px] full touch target
-   - Progress: checkedCount / total * 100
+   - Progress: checkedCount / total \* 100
    - Animated progress bar bg-[#006633]
    - Summary: "X of Y hours completed"
    - Save to localStorage on checkbox change
@@ -541,13 +580,14 @@ export default function RootLayout({ children }) {
    - Import supabase from @/lib/supabase
    - Import useUser from @/hooks/useUser
    - Fetch top 10 students ordered by ready_companies length
-   - Calculate readiness %: ready_companies.length / 53 * 100
+   - Calculate readiness %: ready_companies.length / 53 \* 100
    - Highlight current user row: bg-purple-950 border-purple-700
    - Real-time: supabase.channel subscription on students table
    - MOBILE: full width rows px-3 py-3
    - DESKTOP: max-w-lg mx-auto
 
 ### Verify Phase 5:
+
 - WeeklyPlan shows 4 tabs switching correctly
 - ProgressTracker saves across page refresh
 - Leaderboard fetches real Supabase data
@@ -555,10 +595,12 @@ export default function RootLayout({ children }) {
 ---
 
 ## PHASE 6 — INTERVIEW FEATURE
+
 ### Tell Antigravity: "Execute Phase 6 from GEMINI.md"
+
 ### Files to build: 8
 
-1. src/components/interview/VoiceRecorder.jsx
+<!-- 1. src/components/interview/VoiceRecorder.jsx
    - 'use client'
    - Props: onAnswer(transcript), timeLimit
    - window.SpeechRecognition || window.webkitSpeechRecognition
@@ -644,10 +686,85 @@ export default function RootLayout({ children }) {
 - /interview/session records voice + shows transcript
 - /interview/report shows full scorecard
 
----
+--- -->
+
+## PHASE 6 — ELEVENLABS AI INTERVIEW FEATURE
+
+### Tell Antigravity: "Execute Phase 6 from GEMINI.md"
+
+### Files to build: 6 (Updated for ElevenLabs SDK)
+
+1. src/components/interview/VoiceInterface.jsx
+   - 'use client'
+   - Import { useConversation } from '@elevenlabs/react'
+   - Props: onInterviewEnd(transcriptHistory)
+   - State: transcript array to store conversation history
+   - useConversation hook:
+     - onConnect: set status to 'interviewing'
+     - onMessage: push { role: 'ai' | 'user', text: message } to transcript state
+     - onDisconnect: call onInterviewEnd(transcript)
+   - UI:
+     - Center screen pulsing orb (Framer Motion) when agent isSpeaking
+     - "Start Interview" primary green button
+     - "End Interview & Get Feedback" red button when connected
+   - MOBILE: full width buttons, large touch targets
+
+2. src/app/api/interview-report/route.js
+   - POST handler
+   - Import geminiModel from @/lib/gemini
+   - Accept { transcript[], company, role }
+   - Prompt Gemini 1.5 Flash to evaluate the entire transcript
+   - Report JSON: { overallScore, overallVerdict,
+     hireRecommendation, specificFeedback[{ question,
+     score, whatWasGood, whatWasMissing, idealAnswer, grade }],
+     topStrengths[], topWeaknesses[], nextSteps[] }
+   - Return Response.json(report)
+
+3. src/components/interview/ReportCard.jsx
+   - Props: feedback { question, score, grade, whatWasGood, whatWasMissing, idealAnswer }
+   - Collapsed by default, click to expand
+   - Header: truncated question + grade badge + score%
+   - Grade: A=green, B=blue, C=amber, D=red
+   - Expanded: whatWasGood (green), whatWasMissing (red), idealAnswer (gray)
+
+4. src/components/interview/OverallScore.jsx
+   - Props: score, verdict, recommendation, strengths[], weaknesses[], nextSteps[]
+   - Score: text-6xl font-medium
+   - 80+=green-400, 60-79=amber-400, below 60=red-400
+   - Hire badge: yes=green, consider=amber, no=red
+   - Strengths: green checkmarks
+   - Weaknesses: red X marks
+   - Next steps: numbered list
+
+5. src/app/interview/page.jsx
+   - 'use client'
+   - Import companies from @/data/companies
+   - Form: Company dropdown, Role input, Interview Focus (Technical/HR)
+   - "Connect to AI Interviewer →" green button
+   - Save selection to localStorage: interviewMeta
+   - router.push('/interview/session')
+
+6. src/app/interview/session/page.jsx
+   - 'use client'
+   - Load interviewMeta from localStorage
+   - Render VoiceInterface component
+   - Handle onInterviewEnd:
+     - Save transcript to localStorage
+     - router.push('/interview/report')
+
+7. src/app/interview/report/page.jsx
+   - 'use client'
+   - Load from localStorage: transcript, interviewMeta
+   - POST to /api/interview-report on mount
+   - Show LoadingState ("AI is grading your interview...")
+   - Render OverallScore at top
+   - Render ReportCard array below for question-by-question breakdown
+   - "Back to dashboard" → /results
 
 ## PHASE 7 — ALL PAGES + NAVBAR
+
 ### Tell Antigravity: "Execute Phase 7 from GEMINI.md"
+
 ### Files to build: 5
 
 1. src/components/shared/LoadingState.jsx
@@ -751,16 +868,17 @@ export default function RootLayout({ children }) {
      ProgressTracker full width
      Leaderboard full width
      Fixed bottom bar: "Re-analyze" green button
-       fixed bottom-0 left-0 right-0 bg-gray-900 border-t p-4
+     fixed bottom-0 left-0 right-0 bg-gray-900 border-t p-4
    - DESKTOP md: layout:
      StrengthCard + StatsRow top
      CompanyBoard 3 columns
      grid-cols-2: WeeklyPlan | ProgressTracker
      Leaderboard max-w-lg mx-auto
      Floating bottom-right "Re-analyze" button
-       fixed bottom-6 right-6
+     fixed bottom-6 right-6
 
 ### Verify Phase 7:
+
 - /home loads without login
 - / shows input toggle, analysis works
 - /results shows full dashboard
@@ -770,6 +888,7 @@ export default function RootLayout({ children }) {
 ---
 
 ## SUPABASE TABLE
+
 ### Run this SQL in Supabase dashboard before demo
 
 ```sql

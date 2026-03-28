@@ -2,37 +2,43 @@ import { geminiModel, safeParseJSON } from '@/lib/gemini'
 
 export async function POST(req) {
   try {
-    const { answers, company, role } = await req.json()
+    const { transcript, company, role } = await req.json()
     
-    if (!answers || !company || !role) {
-      return Response.json({ error: 'Missing interview data' }, { status: 400 })
+    if (!transcript || transcript.length === 0 || !company || !role) {
+      return Response.json({ error: 'Missing interview transcript or metadata' }, { status: 400 })
     }
 
+    // Format transcript for the prompt
+    const transcriptText = transcript
+      .map(m => `${m.role.toUpperCase()}: ${m.text}`)
+      .join('\n')
+
     const prompt = `
-      You are an expert interviewer evaluating a student for a ${role} position at ${company}.
-      The student has provided the following answers to the interview questions:
+      You are an expert technical and HR interviewer at ${company}. 
+      Evaluate the following mock interview transcript for a ${role} position.
       
-      ${JSON.stringify(answers)}
+      TRANSCRIPT:
+      ${transcriptText}
       
-      Provide a detailed report in ONLY valid JSON, no markdown:
+      Generate a detailed evaluation report. Identify the key questions asked and provide feedback for each.
+      Return ONLY valid JSON, no markdown:
       {
         "overallScore": 0-100,
-        "overallVerdict": "String summarizing general performance",
+        "overallVerdict": "Strategic summary of the performance",
         "hireRecommendation": "yes | consider | no",
-        "answers": [
+        "specificFeedback": [
           {
-            "questionId": "",
-            "question": "",
+            "question": "The question or topic covered",
             "score": 0-100,
-            "whatWasGood": "String",
-            "whatWasMissing": "String",
-            "idealAnswer": "String",
-            "grade": "A | B | C | D"
+            "grade": "A | B | C | D",
+            "whatWasGood": "Positive aspects of the response",
+            "whatWasMissing": "Missing or weak points",
+            "idealAnswer": "How a top candidate would answer this"
           }
         ],
-        "topStrengths": ["String"],
-        "topWeaknesses": ["String"],
-        "nextSteps": ["String"]
+        "topStrengths": ["Strength 1", "Strength 2"],
+        "topWeaknesses": ["Weakness 1", "Weakness 2"],
+        "nextSteps": ["Actionable improvement 1", "Actionable improvement 2"]
       }
     `
 
@@ -40,7 +46,7 @@ export async function POST(req) {
     const report = safeParseJSON(result.response.text())
 
     if (!report) {
-      return Response.json({ error: 'Failed to generate interview report' }, { status: 500 })
+      return Response.json({ error: 'Failed to generate grading report' }, { status: 500 })
     }
 
     return Response.json(report)
