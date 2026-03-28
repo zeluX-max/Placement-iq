@@ -33,8 +33,22 @@ export function getGeminiModel(config = {}) {
  */
 export const geminiModel = {
   generateContent: async (content) => {
-    const model = getGeminiModel();
-    return model.generateContent(content);
+    let lastError;
+    // retry up to the number of keys available
+    for (let i = 0; i < GEMINI_API_KEYS.length; i++) {
+      try {
+        const model = getGeminiModel();
+        return await model.generateContent(content);
+      } catch (err) {
+        if (err?.status === 429 || err?.message?.includes('429')) {
+          console.warn(`[Gemini] Key hit 429, retrying... (attempt ${i + 1})`);
+          lastError = err;
+          continue;
+        }
+        throw err; // non-quota error, don't retry
+      }
+    }
+    throw lastError; // all keys exhausted
   }
 };
 
