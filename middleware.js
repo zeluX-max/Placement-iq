@@ -32,7 +32,15 @@ export async function middleware(req) {
     req.nextUrl.pathname.startsWith(route)
   )
 
+  // if (!session && isProtected) {
+  //   return NextResponse.redirect(new URL('/login', req.url))
+  // }
   if (!session && isProtected) {
+    // If they just type the plain domain, show them the landing page
+    if (req.nextUrl.pathname === '/') {
+      return NextResponse.redirect(new URL('/home', req.url))
+    }
+    // For any other protected route, send them to login
     return NextResponse.redirect(new URL('/login', req.url))
   }
 
