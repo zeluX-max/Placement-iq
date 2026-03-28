@@ -22,7 +22,11 @@ export function getGeminiModel(config = {}) {
 
   const genAI = new GoogleGenerativeAI(selectedKey);
   return genAI.getGenerativeModel({
-    model: "gemini-2.0-flash", // Using 1.5-flash as per AGENTS.md rule 16 (Gemini 2.5/1.5 Flash API)
+    model: "gemini-1.5-flash-8b",
+    generationConfig: {
+      maxOutputTokens: 500, // reduce from 800
+      temperature: 0.3,     // lower = faster + cheaper
+    },  // 1000 RPD free vs ~50 for 2.0, // Using 1.5-flash as per AGENTS.md rule 16 (Gemini 2.5/1.5 Flash API)
     ...config
   });
 }
@@ -34,23 +38,25 @@ export function getGeminiModel(config = {}) {
 export const geminiModel = {
   generateContent: async (content) => {
     let lastError;
-    // retry up to the number of keys available
     for (let i = 0; i < GEMINI_API_KEYS.length; i++) {
       try {
         const model = getGeminiModel();
         return await model.generateContent(content);
       } catch (err) {
         if (err?.status === 429 || err?.message?.includes('429')) {
-          console.warn(`[Gemini] Key hit 429, retrying... (attempt ${i + 1})`);
+          console.warn(`[Gemini] 429 hit, trying next key (attempt ${i + 1}/${GEMINI_API_KEYS.length})`);
           lastError = err;
+          // wait before retrying: 1s, 2s, 4s...
+          await new Promise(r => setTimeout(r, 1000 * Math.pow(2, i)));
           continue;
         }
-        throw err; // non-quota error, don't retry
+        throw err;
       }
     }
-    throw lastError; // all keys exhausted
+    throw lastError;
   }
 };
+
 
 // Safely parse JSON from Gemini response
 export function safeParseJSON(text) {

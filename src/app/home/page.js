@@ -1,26 +1,46 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { companies } from '@/data/companies';
 import Navbar from '@/components/layout/Navbar';
 
 export default function HomePage() {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
+  const [stats, setStats] = useState({ companies: 0, results: 0 });
+  const [scrolled, setScrolled] = useState(false);
+  const [showAllCompanies, setShowAllCompanies] = useState(false);
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
+  // Count-up stats animation
+  useEffect(() => {
+    let start = null;
+    const durationCompanies = 1500;
+    const durationResults = 800;
+    const animateStats = (timestamp) => {
+      if (!start) start = timestamp;
+      const progressCompanies = Math.min((timestamp - start) / durationCompanies, 1);
+      const progressResults = Math.min((timestamp - start) / durationResults, 1);
+      
+      setStats({
+        companies: Math.floor(progressCompanies * 53),
+        results: Math.floor(progressResults * 10)
+      });
+      
+      if (progressCompanies < 1 || progressResults < 1) {
+        requestAnimationFrame(animateStats);
+      }
+    };
+    requestAnimationFrame(animateStats);
+
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const uniqueCompanies = Array.from(new Set(companies.map(c => c.name)))
+    .map(name => companies.find(c => c.name === name));
+  
+  const displayedCompanies = showAllCompanies ? uniqueCompanies : uniqueCompanies.slice(0, 24);
 
   const steps = [
     { title: "Upload", description: "Upload your LinkedIn PDF or Resume in seconds." },
@@ -29,10 +49,10 @@ export default function HomePage() {
   ];
 
   const features = [
-    { title: "Company Board", description: "See exactly where you stand with 53 major recruiters.", color: "bg-green-500" },
-    { title: "Skill Gaps", description: "Identify the exact technical and soft skills you're missing.", color: "bg-purple-500" },
-    { title: "Study Plan", description: "A day-by-day roadmap tailored to your target companies.", color: "bg-amber-500" },
-    { title: "AI Interview", description: "Practice with our AI-powered mock interviewer.", color: "bg-red-500" }
+    { title: "Company Board", description: "See exactly where you stand with 53 major recruiters.", color: "border-blue-500", icon: "🏢" },
+    { title: "Skill Gaps", description: "Identify the exact technical and soft skills you're missing.", color: "border-red-500", icon: "🔍" },
+    { title: "Study Plan", description: "A day-by-day roadmap tailored to your target companies.", color: "border-green-500", icon: "📅" },
+    { title: "AI Interview", description: "Practice with our AI-powered mock interviewer.", color: "border-purple-500", icon: "🤖" }
   ];
 
   const difficultyColors = {
@@ -43,233 +63,280 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white font-sans overflow-x-hidden">
-      <Navbar />
+      {/* Dynamic Navbar */}
+      <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-gray-950/80 backdrop-blur-md border-b border-gray-800' : 'bg-transparent'}`}>
+        <Navbar />
+      </div>
 
       <main>
-        {/* Hero Section */}
-        <section className="relative px-4 pt-16 md:pt-24 pb-12 md:pb-24 max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-block bg-purple-900/40 text-purple-300 rounded-full px-4 py-1.5 text-xs font-medium border border-purple-800/50 mb-8"
-          >
-            Built for NIT Jalandhar · HackMol 7.0
-          </motion.div>
+        {/* Hero Section with Animated Background */}
+        <section className="relative px-4 pt-32 md:pt-48 pb-20 md:pb-32 max-w-6xl mx-auto text-center overflow-hidden animate-gradient-bg bg-linear-to-b from-gray-950 via-purple-950/10 to-gray-950">
+          {/* Floating Blobs */}
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-6xl font-bold mb-6 leading-tight tracking-tight"
-          >
-            Know if you&apos;re ready for <br />
-            <span className="text-[#006633]">campus placements</span>
-          </motion.h1>
+          <div className="absolute inset-0 -z-10 pointer-events-none">
+            <div className={`absolute top-1/4 left-1/4 w-[300px] h-[300px] bg-purple-900/20 rounded-full blur-3xl animate-float`} style={{ animationDuration: '8s' }}></div>
+            <div className={`absolute top-1/2 right-1/4 w-[200px] h-[200px] bg-green-900/10 rounded-full blur-3xl animate-float`} style={{ animationDuration: '10s', animationDelay: '1s' }}></div>
+            <div className={`absolute bottom-1/4 left-1/2 w-[150px] h-[150px] bg-blue-900/10 rounded-full blur-3xl animate-float`} style={{ animationDuration: '6s', animationDelay: '0.5s' }}></div>
+            <div className={`absolute top-1/3 right-1/2 w-[100px] h-[100px] bg-purple-900/20 rounded-full blur-3xl animate-float`} style={{ animationDuration: '12s', animationDelay: '2s' }}></div>
+            <div className={`absolute bottom-1/3 left-1/3 w-[80px] h-[80px] bg-green-900/20 rounded-full blur-3xl animate-float`} style={{ animationDuration: '9s', animationDelay: '1.5s' }}></div>
+            <div className={`absolute top-3/4 right-1/3 w-[60px] h-[60px] bg-blue-900/20 rounded-full blur-3xl animate-float`} style={{ animationDuration: '11s', animationDelay: '0.2s' }}></div>
+          </div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-base md:text-lg text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed"
-          >
+          <div className="animate-fadeInUp" style={{ animationDelay: '0s' }}>
+            <div className="inline-block bg-purple-900/40 text-purple-300 rounded-full px-4 py-1.5 text-xs font-medium border border-purple-800/50 mb-8 animate-pulse">
+              Built for NIT Jalandhar · HackMol 7.0
+            </div>
+            <h1 className="text-4xl md:text-6xl font-semibold mb-6 leading-tight tracking-tight">
+              Know if you&apos;re ready for <br />
+              <span className="text-[#006633] relative inline-block" style={{ filter: 'drop-shadow(0 0 8px rgba(0, 102, 51, 0.4))' }}>
+                campus placements
+              </span>
+            </h1>
+          </div>
+
+          <p className="text-base md:text-xl text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
             PlacementIQ uses AI to match your profile against NIT Jalandhar&apos;s top recruiters, revealing skill gaps and providing a custom roadmap to success.
-          </motion.p>
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-          >
+          <div className="flex flex-row gap-3 justify-center items-center animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
             <Link
               href="/login"
-              className="w-full sm:w-auto px-8 py-4 bg-[#006633] hover:bg-green-700 text-white rounded-xl text-base font-semibold transition-all shadow-lg hover:shadow-green-900/20"
+              className="relative group w-auto px-6 md:px-8 py-3.5 md:py-4 bg-[#006633] hover:bg-green-700 text-white rounded-xl text-sm md:text-base font-semibold transition-all shadow-lg overflow-hidden"
             >
-              Check my readiness →
+              <span className="relative z-10">Check readiness →</span>
+              <div className="absolute inset-0 bg-green-600/30 rounded-lg animate-ping opacity-0 group-hover:opacity-100 transition-opacity"></div>
             </Link>
             <Link
               href="#how"
-              className="w-full sm:w-auto px-8 py-4 bg-gray-900 hover:bg-gray-800 text-gray-300 border border-gray-800 rounded-xl text-base font-medium transition-all"
+              className="w-auto px-6 md:px-8 py-3.5 md:py-4 bg-gray-900/50 backdrop-blur-sm hover:bg-gray-800 text-gray-300 border border-gray-800 rounded-xl text-sm md:text-base font-medium transition-all"
             >
-              See how it works
+              How it works
             </Link>
-          </motion.div>
+          </div>
 
-          {/* Quick Stats */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="mt-16 grid grid-cols-3 gap-4 border-t border-gray-900 pt-8"
-          >
-            <div className="flex flex-col">
-              <span className="text-xl md:text-2xl font-bold text-white">53</span>
-              <span className="text-[10px] md:text-xs text-gray-500 uppercase tracking-wider font-medium">Companies</span>
+          {/* Quick Stats with vertical dividers */}
+          <div className="mt-20 md:mt-32 flex justify-center items-stretch gap-0 border-t border-gray-900 pt-10 animate-fadeInUp" style={{ animationDelay: '0.6s' }}>
+            <div className="px-6 md:px-12 flex flex-col border-r border-gray-800 last:border-r-0">
+              <span className="text-2xl md:text-4xl font-semibold text-white tracking-tight">{stats.companies}</span>
+              <span className="text-[10px] md:text-xs text-gray-500 uppercase tracking-widest mt-2 font-bold">Companies</span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-xl md:text-2xl font-bold text-white">10s</span>
-              <span className="text-[10px] md:text-xs text-gray-500 uppercase tracking-wider font-medium">Results</span>
+            <div className="px-6 md:px-12 flex flex-col border-r border-gray-800 last:border-r-0">
+              <span className="text-2xl md:text-4xl font-semibold text-white tracking-tight">{stats.results}s</span>
+              <span className="text-[10px] md:text-xs text-gray-500 uppercase tracking-widest mt-2 font-bold">Results</span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-xl md:text-2xl font-bold text-white">4-wk</span>
-              <span className="text-[10px] md:text-xs text-gray-500 uppercase tracking-wider font-medium">Study Plan</span>
+            <div className="px-6 md:px-12 flex flex-col border-r border-gray-800 last:border-r-0">
+              <span className="text-2xl md:text-4xl font-semibold text-white tracking-tight">4-wk</span>
+              <span className="text-[10px] md:text-xs text-gray-500 uppercase tracking-widest mt-2 font-bold">Study Plan</span>
             </div>
-          </motion.div>
-        </section>
-
-        {/* How It Works */}
-        <section id="how" className="px-4 py-20 bg-gray-900/30">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">How it works</h2>
-              <div className="w-12 h-1 bg-[#006633] mx-auto rounded-full"></div>
-            </div>
-
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-8"
-            >
-              {steps.map((step, idx) => (
-                <motion.div
-                  key={idx}
-                  variants={itemVariants}
-                  className="bg-gray-900 border border-gray-800 p-8 rounded-2xl relative"
-                >
-                  <div className="absolute -top-4 -left-4 w-10 h-10 bg-[#006633] rounded-full flex items-center justify-center font-bold text-lg">
-                    {idx + 1}
-                  </div>
-                  <h3 className="text-xl font-bold mb-4">{step.title}</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">{step.description}</p>
-                </motion.div>
-              ))}
-            </motion.div>
           </div>
         </section>
 
-        {/* What You Get */}
-        <section className="px-4 py-20">
+        {/* How It Works Section */}
+        <section id="how" className="px-4 py-24 md:py-32 bg-gray-950/50">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">What you get</h2>
-              <p className="text-gray-500 text-sm">Everything you need to land your dream job from NITJ</p>
+            <div className="text-center mb-20">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">How it works</h2>
+              <div className="w-16 h-1.5 bg-[#006633] mx-auto rounded-full"></div>
             </div>
 
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-6"
-            >
-              {features.map((feature, idx) => (
-                <motion.div
-                  key={idx}
-                  variants={itemVariants}
-                  className="bg-gray-900 border border-gray-800 p-6 rounded-2xl flex items-start gap-5 hover:border-gray-700 transition-colors"
-                >
-                  <div className={`mt-1 w-3 h-3 rounded-full shrink-0 ${feature.color}`}></div>
-                  <div>
-                    <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
-                    <p className="text-gray-400 text-sm">{feature.description}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Companies Section */}
-        <section className="px-4 py-20 bg-gray-900/30">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">Targeting 53 Companies</h2>
-              <p className="text-gray-500 text-sm mb-8">From service giants to premium product firms visiting NITJ</p>
+            <div className="relative grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
+              {/* Dashed Connector Lines */}
+              <div className="hidden md:block absolute top-[45px] left-[15%] right-[15%] h-0.5 border-t-2 border-dashed border-gray-800 z-0"></div>
               
-              <div className="flex flex-wrap justify-center gap-4 mb-10 text-xs font-semibold uppercase tracking-wider">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-600"></div>
-                  <span className="text-red-400">Hard</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-amber-600"></div>
-                  <span className="text-amber-400">Medium</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-green-600"></div>
-                  <span className="text-green-400">Easy</span>
-                </div>
-              </div>
+              {steps.map((step, idx) => (
+                <StepCard key={idx} step={step} index={idx} delay={idx * 0.15} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* What You Get Section */}
+        <section className="px-4 py-24 md:py-32">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-20">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">What you get</h2>
+              <p className="text-gray-500 text-base">Everything you need to land your dream job from NITJ</p>
             </div>
 
-            <div className="flex flex-wrap gap-2 justify-center max-w-4xl mx-auto">
-              {companies.map((company, idx) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+              {features.map((feature, idx) => (
                 <div
                   key={idx}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium border ${difficultyColors[company.difficulty]}`}
+                  className={`bg-gray-900/50 backdrop-blur-sm border-y border-r border-gray-800 p-8 rounded-2xl flex items-start gap-6 hover:bg-gray-900/80 transition-all border-l-4 ${feature.color}`}
                 >
-                  {company.name}
+                  <span className="text-3xl mt-1">{feature.icon}</span>
+                  <div>
+                    <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
+                    <p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Testimonials */}
-        <section className="px-4 py-20">
+        {/* Improved Companies Section */}
+        <section className="px-4 py-24 md:py-32 bg-gray-900/30 relative">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">Loved by Students</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">Targeting 53 Companies</h2>
+              <p className="text-gray-500 text-sm mb-10 max-w-sm mx-auto leading-relaxed">From service giants to premium product firms visiting NITJ campus</p>
+              
+              <div className="flex flex-wrap justify-center gap-6 mb-12 text-[10px] md:text-xs font-bold uppercase tracking-widest">
+                <div className="flex items-center gap-2.5 bg-red-950/30 px-3 py-1.5 rounded-full border border-red-900/30">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></div>
+                  <span className="text-red-400">Hard Category</span>
+                </div>
+                <div className="flex items-center gap-2.5 bg-amber-950/30 px-3 py-1.5 rounded-full border border-amber-900/30">
+                  <div className="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
+                  <span className="text-amber-400">Medium Category</span>
+                </div>
+                <div className="flex items-center gap-2.5 bg-green-950/30 px-3 py-1.5 rounded-full border border-green-900/30">
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                  <span className="text-green-400">Easy Category</span>
+                </div>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-gray-900 border border-gray-800 p-8 rounded-2xl italic text-gray-300">
-                <div className="flex items-center gap-4 mb-4 not-italic font-bold text-white">
-                  <div className="w-10 h-10 rounded-full bg-purple-900 flex items-center justify-center">AS</div>
-                  <span>Abhay Sharma, 4th Year CSE</span>
-                </div>
-                &quot;The study plan was a lifesaver. It showed me exactly what I needed to learn for Atlassian in just 4 weeks.&quot;
+            <div className="relative max-w-5xl mx-auto overflow-hidden">
+              <div className="flex flex-wrap gap-2.5 md:gap-3 justify-center transition-all duration-700">
+                {displayedCompanies.map((company, idx) => (
+                  <div
+                    key={company.name}
+                    className={`px-4 py-2 rounded-xl text-xs md:text-sm font-semibold border transition-all hover:scale-105 cursor-default ${difficultyColors[company.difficulty]} animate-fadeInUp`}
+                    style={{ animationDelay: `${idx * 0.03}s` }}
+                  >
+                    {company.name}
+                  </div>
+                ))}
               </div>
-              <div className="bg-gray-900 border border-gray-800 p-8 rounded-2xl italic text-gray-300">
-                <div className="flex items-center gap-4 mb-4 not-italic font-bold text-white">
-                  <div className="w-10 h-10 rounded-full bg-green-900 flex items-center justify-center">PK</div>
-                  <span>Priya Kaur, 3rd Year IT</span>
+              
+              {!showAllCompanies && uniqueCompanies.length > 24 && (
+                <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-gray-950 via-transparent to-transparent pointer-events-none"></div>
+              )}
+            </div>
+
+            <div className="mt-12 text-center">
+              <button
+                onClick={() => setShowAllCompanies(!showAllCompanies)}
+                className="px-8 py-3 bg-gray-900 hover:bg-gray-800 text-gray-400 text-sm font-semibold rounded-full border border-gray-800 transition-all hover:text-white"
+              >
+                {showAllCompanies ? 'Show less recruiters' : `Show all ${uniqueCompanies.length} recruiters`}
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Enhanced Testimonials */}
+        <section className="px-4 py-24 md:py-32">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-20">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">Loved by Students</h2>
+              <p className="text-gray-500">Join 200+ NITJ students already using PlacementIQ</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 p-10 rounded-3xl relative overflow-hidden group">
+                <div className="absolute -top-4 -right-2 text-[120px] leading-none text-purple-900/20 font-serif select-none pointer-events-none group-hover:text-purple-800/30 transition-all">&quot;</div>
+                <div className="flex gap-1 mb-6">
+                  {[...Array(5)].map((_, i) => (
+                    <span key={i} className="text-amber-400 text-sm">★</span>
+                  ))}
                 </div>
-                &quot;I didn&apos;t know I was missing so many soft skills for Google PM. PlacementIQ&apos;s analysis was eye-opening.&quot;
+                <p className="text-gray-200 text-lg md:text-xl font-medium mb-10 leading-relaxed relative z-10 italic">
+                  &quot;The study plan was a lifesaver. It showed me exactly what I needed to learn for Atlassian in just 4 weeks. Best tool for final year prep.&quot;
+                </p>
+                <div className="flex items-center gap-4 border-t border-gray-800/50 pt-6">
+                  <div className="w-12 h-12 rounded-full bg-purple-900 flex items-center justify-center text-lg font-bold border-2 border-purple-700">AS</div>
+                  <div>
+                    <p className="font-bold text-white">Abhay Sharma</p>
+                    <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">4th Year CSE · NIT Jalandhar</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 p-10 rounded-3xl relative overflow-hidden group">
+                <div className="absolute -top-4 -right-2 text-[120px] leading-none text-green-900/20 font-serif select-none pointer-events-none group-hover:text-green-800/30 transition-all">&quot;</div>
+                <div className="flex gap-1 mb-6">
+                  {[...Array(5)].map((_, i) => (
+                    <span key={i} className="text-amber-400 text-sm">★</span>
+                  ))}
+                </div>
+                <p className="text-gray-200 text-lg md:text-xl font-medium mb-10 leading-relaxed relative z-10 italic">
+                  &quot;I didn&apos;t know I was missing so many soft skills for Google PM. PlacementIQ&apos;s analysis was really eye-opening and practical.&quot;
+                </p>
+                <div className="flex items-center gap-4 border-t border-gray-800/50 pt-6">
+                  <div className="w-12 h-12 rounded-full bg-green-900 flex items-center justify-center text-lg font-bold border-2 border-green-700">PK</div>
+                  <div>
+                    <p className="font-bold text-white">Priya Kaur</p>
+                    <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">3rd Year IT · NIT Jalandhar</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Final CTA */}
-        <section className="px-4 py-24 bg-linear-to-b from-gray-950 to-gray-900 flex flex-col items-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">Ready to find out where you stand?</h2>
-          <p className="text-gray-400 mb-10 text-center max-w-md">Free for all NIT Jalandhar students. Analyze your profile in 60 seconds.</p>
-          <Link
-            href="/login"
-            className="px-10 py-4 bg-[#006633] hover:bg-green-700 text-white rounded-xl text-lg font-bold transition-all transform hover:scale-105"
-          >
-            Get Started Now
-          </Link>
-          <p className="mt-6 text-xs text-gray-500 italic">No college credentials required to start analyzing</p>
+        {/* Dynamic Final CTA */}
+        <section className="px-4 py-32 bg-linear-to-b from-gray-950 to-gray-900 flex flex-col items-center">
+          <div className="max-w-2xl text-center">
+            <h2 className="text-4xl md:text-6xl font-bold mb-8 tracking-tight">Ready to find out where you stand?</h2>
+            <p className="text-gray-400 text-lg mb-12 max-w-md mx-auto leading-relaxed">Free for all NIT Jalandhar students during HackMol 7.0. Analyze your profile in under 60 seconds.</p>
+            <Link
+              href="/login"
+              className="group relative inline-flex items-center justify-center px-12 py-5 bg-[#006633] hover:bg-green-700 text-white rounded-2xl text-xl font-bold transition-all transform hover:scale-105 shadow-2xl shadow-green-900/20"
+            >
+              <span className="relative z-10">Get Started Now</span>
+              <div className="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 rounded-2xl"></div>
+            </Link>
+            <p className="mt-8 text-sm text-gray-500 font-medium">✨ No sensitive college credentials required</p>
+          </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-900 py-12 px-4 md:px-8 bg-gray-950">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-bold italic">
+      {/* Modern Footer */}
+      <footer className="border-t border-gray-800/80 py-16 px-4 md:px-8 bg-black/40 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 items-center text-center md:text-left">
+          <div className="flex flex-col gap-4 items-center md:items-start">
+            <span className="text-3xl font-black italic tracking-tighter">
               Placement<span className="text-[#006633]">IQ</span>
             </span>
+            <p className="text-gray-500 text-xs md:text-sm max-w-xs">AI-powered placement intelligence platform built specifically for N.I.T. Jalandhar students.</p>
           </div>
-          <div className="text-center md:text-right">
-            <p className="text-sm text-gray-500 mb-2">Built at HackMol 7.0 · NIT Jalandhar</p>
-            <p className="text-xs text-gray-600">© 2026 PlacementIQ. All rights reserved.</p>
+          
+          <div className="flex justify-center gap-8">
+            <a href="#" className="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:border-white transition-all">𝕏</a>
+            <a href="#" className="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:border-white transition-all">GH</a>
+            <a href="#" className="w-10 h-10 rounded-full border border-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:border-white transition-all">IN</a>
+          </div>
+
+          <div className="flex flex-col gap-2 items-center md:items-end">
+            <p className="text-sm font-bold text-white tracking-wide">Made with ❤️ at HackMol 7.0</p>
+            <p className="text-xs text-gray-600 uppercase tracking-widest font-bold">© 2026 NIT Jalandhar</p>
           </div>
         </div>
       </footer>
     </div>
   );
 }
+
+// Sub-component for Step Cards with scrollreveal
+function StepCard({ step, index, delay }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "0px 0px -100px 0px" });
+
+  return (
+    <div
+      ref={ref}
+      className={`bg-gray-900 border border-gray-800 p-10 rounded-3xl relative z-10 hover:border-gray-700 transition-all duration-700 transform ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
+      style={{ transitionDelay: `${delay}s` }}
+    >
+      <div className="absolute -top-6 left-10 w-14 h-14 bg-purple-900 text-purple-300 rounded-full flex items-center justify-center font-black text-2xl shadow-xl shadow-purple-950/50 border-4 border-gray-950">
+        {index + 1}
+      </div>
+      <h3 className="text-2xl font-bold mb-5 mt-4">{step.title}</h3>
+      <p className="text-gray-400 text-base leading-relaxed">{step.description}</p>
+    </div>
+  );
+}
+
