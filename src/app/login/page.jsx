@@ -34,16 +34,12 @@ export default function LoginPage() {
           email: formData.email,
           password: formData.password,
           options: {
-            data: {
-              full_name: formData.fullName
-            }
+            data: { full_name: formData.fullName }
           }
         })
         if (signUpError) throw signUpError
-        // In signup case, if email confirm is off, we might just be logged in
-        // If it's on, we would wait for verification, but common practice here
-        // is to redirect and let them know OR redirect to confirm page
-        // For simplicity as per instruction: "router.push('/') on success"
+        await supabase.auth.getSession()
+        router.refresh()
         router.push('/')
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -51,6 +47,8 @@ export default function LoginPage() {
           password: formData.password
         })
         if (signInError) throw signInError
+        await supabase.auth.getSession()
+        router.refresh()
         router.push('/')
       }
     } catch (err) {
@@ -62,7 +60,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center px-4 py-8">
-      {/* Logo Section */}
       <div className="mb-8 text-center">
         <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
           Placement<span className="text-[#006633]">IQ</span>
@@ -70,7 +67,6 @@ export default function LoginPage() {
         <p className="text-gray-400 text-sm mt-1">NIT Jalandhar</p>
       </div>
 
-      {/* Auth Card */}
       <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-2xl">
         <h2 className="text-xl md:text-2xl font-medium text-white mb-6 text-center">
           {isSignUp ? 'Create your account' : 'Welcome back'}
@@ -149,7 +145,7 @@ export default function LoginPage() {
               setIsSignUp(!isSignUp)
               setError(null)
             }}
-            className="text-gray-400 hover:text-white text-sm transition-colors decoration-gray-700 hover:decoration-white"
+            className="text-gray-400 hover:text-white text-sm transition-colors"
           >
             {isSignUp ? (
               <>Already have an account? <span className="text-[#006633] font-medium">Sign In</span></>
@@ -160,7 +156,6 @@ export default function LoginPage() {
         </div>
       </div>
       
-      {/* Footer Hint */}
       <p className="mt-8 text-gray-500 text-xs">
         Use your @nitj.ac.in email for verification
       </p>
