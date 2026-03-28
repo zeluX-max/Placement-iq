@@ -5,7 +5,12 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
 export const geminiModel = genAI.getGenerativeModel({
   model: "gemini-2.5-flash"
 })
-
+const model = genAI.getGenerativeModel({ 
+  model: "gemini-1.5-flash",
+  generationConfig: {
+    responseMimeType: "application/json", // This forces pure JSON output instantly
+  }
+});
 // Safely parse JSON from Gemini response
 export function safeParseJSON(text) {
   try {
@@ -59,7 +64,9 @@ export async function analyzeProfile(studentProfile, companies) {
 
     Company Database:
     ${JSON.stringify(companies)}
-
+    Analyze and return ONLY valid JSON. 
+    LIMIT the 'ready' array to a maximum of 3 companies. 
+    LIMIT the 'stretch' array to a maximum of 2 companies
     Analyze and return ONLY valid JSON, no markdown:
     {
       "ready": [
@@ -109,7 +116,10 @@ export async function generateStudyPlan(studentProfile, gapAnalysis) {
     Their Gap Analysis:
     ${JSON.stringify(gapAnalysis)}
 
-    Generate a personalized 4-week study plan. Return ONLY valid JSON, no markdown:
+    Generate a personalized study plan. 
+    LIMIT the plan to 2 weeks instead of 4. 
+    LIMIT the 'tasks' array to exactly 2 high-level tasks per week. 
+    Keep task descriptions under 10 words. Return ONLY valid JSON:
     {
       "totalHours": 0,
       "targetCompany": "",
