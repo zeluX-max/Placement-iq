@@ -15,21 +15,25 @@ export default function InputToggle({ onProfileReady }) {
   ]
 
   return (
-    <div className="w-full space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+    <div className="w-full space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex flex-col items-center justify-center p-4 rounded-xl transition-all text-center min-h-[88px] ${
+            className={`flex flex-col items-center justify-center p-6 rounded-2xl transition-custom text-center min-h-[100px] active:scale-[0.98] ${
               activeTab === tab.id
-                ? 'border-2 border-purple-500 bg-purple-950/40'
-                : 'border border-gray-700 hover:border-gray-500 bg-gray-900/50'
+                ? 'border-2 border-brand-green bg-brand-green/10 shadow-lg shadow-brand-green/5'
+                : 'border border-gray-800 hover:border-gray-700 bg-gray-900/40 hover:bg-gray-900/60'
             }`}
           >
-            <span className="text-xl mb-1">{tab.icon}</span>
-            <span className="text-sm font-medium text-white">{tab.label}</span>
-            <span className="text-[10px] text-gray-500 uppercase tracking-wider">{tab.subtitle}</span>
+            <span className="text-2xl mb-2">{tab.icon}</span>
+            <span className={`text-sm font-bold tracking-tight ${activeTab === tab.id ? 'text-white' : 'text-gray-300'}`}>
+              {tab.label}
+            </span>
+            <span className="text-[10px] text-gray-500 uppercase tracking-widest mt-1 font-bold">
+              {tab.subtitle}
+            </span>
           </button>
         ))}
       </div>

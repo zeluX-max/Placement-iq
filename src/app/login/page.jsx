@@ -59,23 +59,23 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center px-4 py-8">
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
-          Placement<span className="text-[#006633]">IQ</span>
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center px-4 py-12 transition-custom">
+      <div className="mb-12 text-center animate-fadeInUp">
+        <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter">
+          Placement<span className="text-brand-green">IQ</span>
         </h1>
-        <p className="text-gray-400 text-sm mt-1">NIT Jalandhar</p>
+        <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mt-2">NIT Jalandhar</p>
       </div>
 
-      <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-2xl">
-        <h2 className="text-xl md:text-2xl font-medium text-white mb-6 text-center">
+      <div className="w-full max-w-md glass-card rounded-3xl p-8 md:p-10 shadow-2xl shadow-brand-green/5 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
+        <h2 className="text-2xl font-black text-white mb-8 text-center tracking-tight">
           {isSignUp ? 'Create your account' : 'Welcome back'}
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {isSignUp && (
-            <div>
-              <label className="block text-xs font-medium text-gray-500 uppercase mb-1.5 ml-1">
+            <div className="space-y-2">
+              <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">
                 Full Name
               </label>
               <input
@@ -85,13 +85,13 @@ export default function LoginPage() {
                 required={isSignUp}
                 value={formData.fullName}
                 onChange={handleChange}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#006633] transition-all"
+                className="w-full bg-gray-900/50 border border-gray-800 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/50 transition-custom"
               />
             </div>
           )}
 
-          <div>
-            <label className="block text-xs font-medium text-gray-500 uppercase mb-1.5 ml-1">
+          <div className="space-y-2">
+            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">
               College Email
             </label>
             <input
@@ -101,12 +101,12 @@ export default function LoginPage() {
               required
               value={formData.email}
               onChange={handleChange}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#006633] transition-all"
+              className="w-full bg-gray-900/50 border border-gray-800 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/50 transition-custom"
             />
           </div>
 
-          <div>
-            <label className="block text-xs font-medium text-gray-500 uppercase mb-1.5 ml-1">
+          <div className="space-y-2">
+            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">
               Password
             </label>
             <input
@@ -116,12 +116,12 @@ export default function LoginPage() {
               required
               value={formData.password}
               onChange={handleChange}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#006633] transition-all"
+              className="w-full bg-gray-900/50 border border-gray-800 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/50 transition-custom"
             />
           </div>
 
           {error && (
-            <div className="text-red-500 text-xs mt-2 bg-red-950/30 border border-red-900/50 p-3 rounded-lg">
+            <div className="text-red-400 text-xs font-medium mt-4 bg-red-950/20 border border-red-900/30 p-4 rounded-xl">
               {error}
             </div>
           )}
@@ -129,34 +129,34 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#006633] hover:bg-green-700 text-white font-medium py-3 rounded-lg transition-colors min-h-[44px] mt-6 flex items-center justify-center disabled:opacity-50"
+            className="w-full bg-brand-green hover:bg-brand-green-hover text-white font-bold py-4 rounded-xl transition-custom min-h-[52px] mt-8 flex items-center justify-center disabled:opacity-50 active:scale-95 shadow-xl shadow-brand-green/10"
           >
             {loading ? (
-              <span className="animate-pulse">Loading...</span>
+              <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
             ) : (
-              isSignUp ? 'Sign Up' : 'Sign In'
+              isSignUp ? 'Create Account' : 'Sign In to Dashboard'
             )}
           </button>
         </form>
 
-        <div className="mt-8 text-center">
+        <div className="mt-10 text-center">
           <button
             onClick={() => {
               setIsSignUp(!isSignUp)
               setError(null)
             }}
-            className="text-gray-400 hover:text-white text-sm transition-colors"
+            className="text-gray-500 hover:text-white text-sm font-medium transition-custom"
           >
             {isSignUp ? (
-              <>Already have an account? <span className="text-[#006633] font-medium">Sign In</span></>
+              <>Already have an account? <span className="text-brand-green font-bold">Sign In</span></>
             ) : (
-              <>Don&apos;t have an account? <span className="text-[#006633] font-medium">Create Account</span></>
+              <>Don&apos;t have an account? <span className="text-brand-green font-bold">Create Account</span></>
             )}
           </button>
         </div>
       </div>
       
-      <p className="mt-8 text-gray-500 text-xs">
+      <p className="mt-12 text-gray-600 text-[10px] font-black uppercase tracking-widest opacity-50">
         Use your @nitj.ac.in email for verification
       </p>
     </div>

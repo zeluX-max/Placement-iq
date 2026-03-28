@@ -62,9 +62,9 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground transition-custom selection:bg-brand-green selection:text-white">
       {/* Dynamic Navbar */}
-      <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-gray-950/80 backdrop-blur-md border-b border-gray-800' : 'bg-transparent'}`}>
+      <div className={`fixed top-0 left-0 right-0 z-50 transition-custom ${scrolled ? 'glass-card border-x-0 border-t-0 shadow-xl' : 'bg-transparent border-transparent'}`}>
         <Navbar />
       </div>
 
@@ -88,7 +88,7 @@ export default function HomePage() {
             </div>
             <h1 className="text-4xl md:text-6xl font-semibold mb-6 leading-tight tracking-tight">
               Know if you&apos;re ready for <br />
-              <span className="text-[#006633] relative inline-block" style={{ filter: 'drop-shadow(0 0 8px rgba(0, 102, 51, 0.4))' }}>
+              <span className="text-brand-green relative inline-block" style={{ filter: 'drop-shadow(0 0 8px rgba(0, 102, 51, 0.4))' }}>
                 campus placements
               </span>
             </h1>
@@ -101,32 +101,32 @@ export default function HomePage() {
           <div className="flex flex-row gap-3 justify-center items-center animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
             <Link
               href="/login"
-              className="relative group w-auto px-6 md:px-8 py-3.5 md:py-4 bg-[#006633] hover:bg-green-700 text-white rounded-xl text-sm md:text-base font-semibold transition-all shadow-lg overflow-hidden"
+              className="relative group w-auto px-10 py-4 bg-brand-green hover:bg-brand-green-hover text-white rounded-2xl text-base font-bold transition-custom shadow-xl shadow-brand-green/20 overflow-hidden active:scale-95"
             >
               <span className="relative z-10">Check readiness →</span>
-              <div className="absolute inset-0 bg-green-600/30 rounded-lg animate-ping opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="absolute inset-0 bg-white/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500"></div>
             </Link>
             <Link
               href="#how"
-              className="w-auto px-6 md:px-8 py-3.5 md:py-4 bg-gray-900/50 backdrop-blur-sm hover:bg-gray-800 text-gray-300 border border-gray-800 rounded-xl text-sm md:text-base font-medium transition-all"
+              className="w-auto px-10 py-4 bg-gray-900/40 backdrop-blur-sm hover:bg-gray-800 text-gray-300 border border-gray-800/60 rounded-2xl text-base font-medium transition-custom active:scale-95"
             >
               How it works
             </Link>
           </div>
 
           {/* Quick Stats with vertical dividers */}
-          <div className="mt-20 md:mt-32 flex justify-center items-stretch gap-0 border-t border-gray-900 pt-10 animate-fadeInUp" style={{ animationDelay: '0.6s' }}>
-            <div className="px-6 md:px-12 flex flex-col border-r border-gray-800 last:border-r-0">
-              <span className="text-2xl md:text-4xl font-semibold text-white tracking-tight">{stats.companies}</span>
-              <span className="text-[10px] md:text-xs text-gray-500 uppercase tracking-widest mt-2 font-bold">Companies</span>
+          <div className="mt-24 md:mt-36 flex justify-center items-stretch gap-0 border-t border-gray-900/50 pt-12 animate-fadeInUp" style={{ animationDelay: '0.6s' }}>
+            <div className="px-8 md:px-16 flex flex-col border-r border-gray-800/50 last:border-r-0">
+              <span className="text-3xl md:text-5xl font-black text-white tracking-tighter">{stats.companies}</span>
+              <span className="text-[10px] md:text-xs text-gray-500 uppercase tracking-widest mt-3 font-black">Companies</span>
             </div>
-            <div className="px-6 md:px-12 flex flex-col border-r border-gray-800 last:border-r-0">
-              <span className="text-2xl md:text-4xl font-semibold text-white tracking-tight">{stats.results}s</span>
-              <span className="text-[10px] md:text-xs text-gray-500 uppercase tracking-widest mt-2 font-bold">Results</span>
+            <div className="px-8 md:px-16 flex flex-col border-r border-gray-800/50 last:border-r-0">
+              <span className="text-3xl md:text-5xl font-black text-white tracking-tighter">{stats.results}s</span>
+              <span className="text-[10px] md:text-xs text-gray-500 uppercase tracking-widest mt-3 font-black">Results</span>
             </div>
-            <div className="px-6 md:px-12 flex flex-col border-r border-gray-800 last:border-r-0">
-              <span className="text-2xl md:text-4xl font-semibold text-white tracking-tight">4-wk</span>
-              <span className="text-[10px] md:text-xs text-gray-500 uppercase tracking-widest mt-2 font-bold">Study Plan</span>
+            <div className="px-8 md:px-16 flex flex-col border-r border-gray-800/50 last:border-r-0">
+              <span className="text-3xl md:text-5xl font-black text-white tracking-tighter">4-wk</span>
+              <span className="text-[10px] md:text-xs text-gray-500 uppercase tracking-widest mt-3 font-black">Study Plan</span>
             </div>
           </div>
         </section>
@@ -136,7 +136,7 @@ export default function HomePage() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-20">
               <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">How it works</h2>
-              <div className="w-16 h-1.5 bg-[#006633] mx-auto rounded-full"></div>
+              <div className="w-16 h-1.5 bg-brand-green mx-auto rounded-full"></div>
             </div>
 
             <div className="relative grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
@@ -158,16 +158,16 @@ export default function HomePage() {
               <p className="text-gray-500 text-base">Everything you need to land your dream job from NITJ</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
               {features.map((feature, idx) => (
                 <div
                   key={idx}
-                  className={`bg-gray-900/50 backdrop-blur-sm border-y border-r border-gray-800 p-8 rounded-2xl flex items-start gap-6 hover:bg-gray-900/80 transition-all border-l-4 ${feature.color}`}
+                  className={`glass-card p-10 rounded-2xl flex items-start gap-8 transition-custom hover:border-gray-600 hover:shadow-2xl hover:shadow-brand-green/5 border-l-4 ${feature.color}`}
                 >
-                  <span className="text-3xl mt-1">{feature.icon}</span>
+                  <span className="text-4xl mt-1">{feature.icon}</span>
                   <div>
-                    <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-                    <p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
+                    <h3 className="text-2xl font-black mb-4 tracking-tight">{feature.title}</h3>
+                    <p className="text-gray-400 text-base leading-relaxed">{feature.description}</p>
                   </div>
                 </div>
               ))}
@@ -203,7 +203,7 @@ export default function HomePage() {
                 {displayedCompanies.map((company, idx) => (
                   <div
                     key={company.name}
-                    className={`px-4 py-2 rounded-xl text-xs md:text-sm font-semibold border transition-all hover:scale-105 cursor-default ${difficultyColors[company.difficulty]} animate-fadeInUp`}
+                    className={`px-5 py-2.5 rounded-full text-xs md:text-sm font-bold border transition-custom hover:scale-105 cursor-default ${difficultyColors[company.difficulty]} animate-fadeInUp`}
                     style={{ animationDelay: `${idx * 0.03}s` }}
                   >
                     {company.name}
@@ -216,10 +216,10 @@ export default function HomePage() {
               )}
             </div>
 
-            <div className="mt-12 text-center">
+            <div className="mt-16 text-center">
               <button
                 onClick={() => setShowAllCompanies(!showAllCompanies)}
-                className="px-8 py-3 bg-gray-900 hover:bg-gray-800 text-gray-400 text-sm font-semibold rounded-full border border-gray-800 transition-all hover:text-white"
+                className="px-10 py-4 bg-gray-900/60 hover:bg-gray-800 text-gray-400 text-sm font-bold rounded-full border border-gray-800 transition-custom hover:text-white hover:border-gray-500 active:scale-95"
               >
                 {showAllCompanies ? 'Show less recruiters' : `Show all ${uniqueCompanies.length} recruiters`}
               </button>
@@ -284,10 +284,10 @@ export default function HomePage() {
             <p className="text-gray-400 text-lg mb-12 max-w-md mx-auto leading-relaxed">Free for all NIT Jalandhar students during HackMol 7.0. Analyze your profile in under 60 seconds.</p>
             <Link
               href="/login"
-              className="group relative inline-flex items-center justify-center px-12 py-5 bg-[#006633] hover:bg-green-700 text-white rounded-2xl text-xl font-bold transition-all transform hover:scale-105 shadow-2xl shadow-green-900/20"
+              className="group relative inline-flex items-center justify-center px-16 py-6 bg-brand-green hover:bg-brand-green-hover text-white rounded-2xl text-2xl font-black transition-custom transform hover:scale-105 shadow-2xl shadow-brand-green/30"
             >
               <span className="relative z-10">Get Started Now</span>
-              <div className="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 rounded-2xl"></div>
+              <div className="absolute inset-0 bg-white/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 rounded-2xl"></div>
             </Link>
             <p className="mt-8 text-sm text-gray-500 font-medium">✨ No sensitive college credentials required</p>
           </div>
@@ -299,7 +299,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 items-center text-center md:text-left">
           <div className="flex flex-col gap-4 items-center md:items-start">
             <span className="text-3xl font-black italic tracking-tighter">
-              Placement<span className="text-[#006633]">IQ</span>
+              Placement<span className="text-brand-green">IQ</span>
             </span>
             <p className="text-gray-500 text-xs md:text-sm max-w-xs">AI-powered placement intelligence platform built specifically for N.I.T. Jalandhar students.</p>
           </div>
@@ -328,14 +328,14 @@ function StepCard({ step, index, delay }) {
   return (
     <div
       ref={ref}
-      className={`bg-gray-900 border border-gray-800 p-10 rounded-3xl relative z-10 hover:border-gray-700 transition-all duration-700 transform ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
+      className={`glass-card p-12 rounded-3xl relative z-10 hover:border-gray-600 transition-custom duration-700 transform ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
       style={{ transitionDelay: `${delay}s` }}
     >
-      <div className="absolute -top-6 left-10 w-14 h-14 bg-purple-900 text-purple-300 rounded-full flex items-center justify-center font-black text-2xl shadow-xl shadow-purple-950/50 border-4 border-gray-950">
+      <div className="absolute -top-7 left-12 w-16 h-16 bg-brand-green text-white rounded-2xl flex items-center justify-center font-black text-3xl shadow-2xl shadow-brand-green/30 rotate-3 group-hover:rotate-0 transition-custom border-4 border-background">
         {index + 1}
       </div>
-      <h3 className="text-2xl font-bold mb-5 mt-4">{step.title}</h3>
-      <p className="text-gray-400 text-base leading-relaxed">{step.description}</p>
+      <h3 className="text-3xl font-black mb-6 mt-6 tracking-tighter">{step.title}</h3>
+      <p className="text-gray-400 text-lg leading-relaxed">{step.description}</p>
     </div>
   );
 }

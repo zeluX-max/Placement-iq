@@ -61,9 +61,9 @@ export default function DashboardEntry() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-950 text-white">
+      <div className="min-h-screen bg-background text-foreground">
         <Navbar />
-        <main className="max-w-4xl mx-auto pt-20 px-4">
+        <main className="max-w-4xl mx-auto pt-24 px-4">
           <LoadingState />
         </main>
       </div>
@@ -71,31 +71,34 @@ export default function DashboardEntry() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white font-sans">
+    <div className="min-h-screen bg-background text-foreground transition-custom">
       <Navbar />
 
-      <main className="max-w-4xl mx-auto px-4 py-12 md:py-20">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">
+      <main className="max-w-4xl mx-auto px-4 py-16 md:py-24">
+        <div className="text-center mb-16 animate-fadeInUp">
+          <div className="inline-block bg-brand-green/10 text-brand-green rounded-full px-4 py-1 border border-brand-green/20 mb-6 text-xs font-bold uppercase tracking-widest">
+            Profile Analysis
+          </div>
+          <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tighter">
             Are you placement ready?
           </h1>
-          <p className="text-gray-400 text-sm md:text-base max-w-xl mx-auto">
+          <p className="text-gray-400 text-lg max-w-xl mx-auto leading-relaxed">
             Upload your profile or fill your details manually to see which companies 
             visiting NIT Jalandhar are looking for you.
           </p>
         </div>
 
         {error && (
-          <div className="mb-8 p-4 bg-red-950/40 border border-red-800 rounded-xl text-red-400 text-sm text-center">
+          <div className="mb-10 p-5 bg-red-950/20 border border-red-900/30 rounded-2xl text-red-400 text-sm text-center font-medium animate-fadeInUp">
             {error}. Please try again.
           </div>
         )}
 
-        <div className="bg-gray-900 border border-gray-800 rounded-3xl p-6 md:p-10 shadow-2xl">
+        <div className="glass-card rounded-3xl p-8 md:p-12 shadow-2xl shadow-brand-green/5 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
           <InputToggle onProfileReady={handleProfileReady} />
         </div>
 
-        <div className="mt-12 text-center text-gray-500 text-xs">
+        <div className="mt-16 text-center text-gray-500 text-xs font-bold uppercase tracking-widest opacity-50">
           Built for NIT Jalandhar students · HackMol 7.0
         </div>
       </main>

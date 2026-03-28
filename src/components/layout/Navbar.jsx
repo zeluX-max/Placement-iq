@@ -27,13 +27,13 @@ export default function Navbar() {
   const isActive = (path) => pathname === path;
 
   return (
-    <nav className="sticky top-0 z-50 bg-gray-950/80 backdrop-blur-md border-b border-gray-800">
+    <nav className="sticky top-0 z-50 glass-card border-x-0 border-t-0 border-b border-gray-800/60 transition-custom">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href={user ? "/" : "/home"} className="flex items-center gap-1.5 group">
-            <span className="text-xl font-bold text-white group-hover:text-green-500 transition-colors">
-              Placement<span className="text-[#006633]">IQ</span>
+          <Link href={user ? "/" : "/home"} className="flex items-center gap-1.5 group transition-custom">
+            <span className="text-xl font-bold text-white group-hover:text-brand-green transition-custom">
+              Placement<span className="text-brand-green">IQ</span>
             </span>
             <span className="hidden sm:inline text-xs text-gray-500 border-l border-gray-800 ml-2 pl-2">
               NIT Jalandhar
@@ -46,7 +46,7 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`text-sm font-medium transition-colors hover:text-white ${
+                className={`text-sm font-medium transition-custom hover:text-white ${
                   isActive(link.href) ? 'text-white' : 'text-gray-400'
                 }`}
               >
@@ -66,7 +66,7 @@ export default function Navbar() {
                 </div>
                 <button
                   onClick={handleSignOut}
-                  className="text-xs px-3 py-1.5 rounded-lg border border-gray-800 hover:bg-gray-900 text-gray-400 hover:text-white transition-all"
+                  className="text-xs px-3 py-1.5 rounded-lg border border-gray-800 hover:bg-gray-900 text-gray-400 hover:text-white transition-custom active:scale-95"
                 >
                   Sign out
                 </button>
@@ -74,7 +74,7 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/login"
-                className="bg-[#006633] hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all"
+                className="bg-brand-green hover:bg-brand-green-hover text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-custom active:scale-95 shadow-lg shadow-brand-green/10"
               >
                 Sign in
               </Link>
@@ -85,7 +85,7 @@ export default function Navbar() {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 text-gray-400 hover:text-white transition-colors"
+              className="p-2 text-gray-400 hover:text-white transition-custom"
               aria-label="Toggle menu"
             >
               {isOpen ? (
@@ -111,7 +111,7 @@ export default function Navbar() {
             exit={{ opacity: 0, y: -10 }}
             className="md:hidden absolute top-16 left-0 right-0 bg-gray-900 border-b border-gray-800 shadow-2xl"
           >
-            <div className="px-4 py-6 space-y-4">
+            <div className="px-4 py-8 space-y-6">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
@@ -122,11 +122,11 @@ export default function Navbar() {
                   {link.name}
                 </Link>
               ))}
-              <div className="pt-4 border-t border-gray-800">
+              <div className="pt-6 border-t border-gray-800">
                 {user ? (
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-purple-900 flex items-center justify-center text-xs font-bold text-purple-200 uppercase">
+                      <div className="w-10 h-10 rounded-full bg-brand-green/20 flex items-center justify-center text-sm font-bold text-brand-green uppercase border border-brand-green/30">
                         {(user.user_metadata?.full_name || user.email)[0]}
                       </div>
                       <span className="text-sm font-medium text-white">
@@ -135,7 +135,7 @@ export default function Navbar() {
                     </div>
                     <button
                       onClick={handleSignOut}
-                      className="w-full text-center py-3 bg-gray-800 text-gray-300 rounded-lg text-sm font-medium"
+                      className="w-full text-center py-4 bg-gray-800 text-gray-300 rounded-xl text-sm font-medium active:scale-[0.98] transition-transform"
                     >
                       Sign out
                     </button>
@@ -144,7 +144,7 @@ export default function Navbar() {
                   <Link
                     href="/login"
                     onClick={() => setIsOpen(false)}
-                    className="block w-full text-center py-3 bg-[#006633] text-white rounded-lg text-sm font-medium"
+                    className="block w-full text-center py-4 bg-brand-green text-white rounded-xl text-sm font-medium shadow-xl shadow-brand-green/20"
                   >
                     Sign in
                   </Link>
