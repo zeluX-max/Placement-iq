@@ -244,3 +244,19 @@ export async function generateStudyPlan(studentProfile, gapAnalysis) {
   `);
   return safeParseJSON(text);
 }
+// --- 5. LEGACY PROXY (For Interview Routes) ---
+// This keeps interview-questions and interview-report from breaking
+export const geminiModel = {
+  generateContent: async (content) => {
+    // Extract the text prompt, ignoring any complex Gemini-specific formatting
+    const prompt = Array.isArray(content)
+      ? content.map(c => c.text || '').join('\n')
+      : content;
+      
+    // Route the prompt through our new Groq helper
+    const text = await generateWithGroq(prompt);
+    
+    // Return it in the shape the old code expects: result.response.text()
+    return { response: { text: () => text } };
+  }
+};
