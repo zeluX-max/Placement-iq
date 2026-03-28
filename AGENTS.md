@@ -926,4 +926,5 @@ create policy "Users can manage own data" on students
 □ Verify QR code → Vercel URL works
 □ Prepare demo script
 □ Have backup video recorded
+□ Prepare 3-minute pitch
 ```
