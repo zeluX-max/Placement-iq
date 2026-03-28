@@ -229,7 +229,10 @@ export function safeParseJSON(text) {
     // Find JSON object between first { and last }
     const start = text.indexOf('{');
     const end = text.lastIndexOf('}');
-    if (start === -1 || end === -1) return null;
+    if (start === -1 || end === -1) {
+      console.error("No JSON object found in:", text?.slice(0, 200));
+      return null;
+    }
     const clean = text.slice(start, end + 1);
     return JSON.parse(clean);
   } catch (err) {
