@@ -3,13 +3,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
-import { companies } from '@/data/companies';
 import Navbar from '@/components/layout/Navbar';
 
 export default function HomePage() {
   const [stats, setStats] = useState({ companies: 0, results: 0 });
   const [scrolled, setScrolled] = useState(false);
-  const [showAllCompanies, setShowAllCompanies] = useState(false);
 
   // Count-up stats animation
   useEffect(() => {
@@ -37,12 +35,13 @@ export default function HomePage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const uniqueCompanies = Array.from(new Set(companies.map(c => c.name)))
-    .map(name => companies.find(c => c.name === name));
-  
-  const marqueeCompanies = ['Microsoft', 'Google', 'Amazon', 'Flipkart', 'Infosys']
-    .map(name => uniqueCompanies.find(c => c.name === name))
-    .filter(Boolean);
+  const companies5 = [
+    { name: 'Microsoft', logo: 'https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg' },
+    { name: 'Google', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg' },
+    { name: 'Amazon', logo: 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg' },
+    { name: 'Flipkart', logo: 'https://upload.wikimedia.org/wikipedia/en/7/74/Flipkart_logo.svg' },
+    { name: 'Infosys', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/95/Infosys_logo.svg' },
+  ];
 
   const steps = [
     { title: "Upload", description: "Upload your LinkedIn PDF or Resume in seconds." },
@@ -56,12 +55,6 @@ export default function HomePage() {
     { title: "Study Plan", description: "A day-by-day roadmap tailored to your target companies.", color: "border-green-500", icon: "📅" },
     { title: "AI Interview", description: "Practice with our AI-powered mock interviewer.", color: "border-purple-500", icon: "🤖" }
   ];
-
-  const difficultyColors = {
-    easy: "bg-green-950 text-green-400 border-green-800",
-    medium: "bg-amber-950 text-amber-400 border-amber-800",
-    hard: "bg-red-950 text-red-400 border-red-800"
-  };
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-custom selection:bg-brand-green selection:text-white">
@@ -200,16 +193,15 @@ export default function HomePage() {
               <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-gray-950/50 to-transparent z-10 pointer-events-none"></div>
               <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-gray-950/50 to-transparent z-10 pointer-events-none"></div>
               
-              <div className="flex animate-marquee gap-4 w-max py-4">
+              <div className="flex animate-marquee gap-12 md:gap-16 w-max py-4 items-center px-6">
                 {/* Duplicate for seamless loop */}
-                {[...marqueeCompanies, ...marqueeCompanies].map((c, i) => (
-                  <div 
-                    key={i} 
-                    className={`flex items-center gap-3 px-6 py-3 rounded-full bg-gray-900/50 backdrop-blur-sm border border-gray-800 transition-custom hover:border-gray-600 hover:scale-105 cursor-default ${difficultyColors[c.difficulty].split(' ').filter(cls => !cls.includes('bg-')).join(' ')}`}
-                  >
-                    <span className="font-bold whitespace-nowrap">{c.name}</span>
-                    <div className={`w-2 h-2 rounded-full ${c.difficulty === 'hard' ? 'bg-red-500' : c.difficulty === 'medium' ? 'bg-amber-500' : 'bg-green-500'}`}></div>
-                  </div>
+                {[...companies5, ...companies5].map((company, i) => (
+                  <img
+                    key={i}
+                    src={company.logo}
+                    alt={company.name}
+                    className="h-12 md:h-16 object-contain opacity-80"
+                  />
                 ))}
               </div>
             </div>
@@ -228,55 +220,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Enhanced Testimonials */}
-        <section className="px-4 py-24 md:py-32">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-20">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">Loved by Students</h2>
-              <p className="text-gray-500">Join 200+ NITJ students already using PlacementIQ</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 p-10 rounded-3xl relative overflow-hidden group">
-                <div className="absolute -top-4 -right-2 text-[120px] leading-none text-purple-900/20 font-serif select-none pointer-events-none group-hover:text-purple-800/30 transition-all">&quot;</div>
-                <div className="flex gap-1 mb-6">
-                  {[...Array(5)].map((_, i) => (
-                    <span key={i} className="text-amber-400 text-sm">★</span>
-                  ))}
-                </div>
-                <p className="text-gray-200 text-lg md:text-xl font-medium mb-10 leading-relaxed relative z-10 italic">
-                  &quot;The study plan was a lifesaver. It showed me exactly what I needed to learn for Atlassian in just 4 weeks. Best tool for final year prep.&quot;
-                </p>
-                <div className="flex items-center gap-4 border-t border-gray-800/50 pt-6">
-                  <div className="w-12 h-12 rounded-full bg-purple-900 flex items-center justify-center text-lg font-bold border-2 border-purple-700">AS</div>
-                  <div>
-                    <p className="font-bold text-white">Abhay Sharma</p>
-                    <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">4th Year CSE · NIT Jalandhar</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 p-10 rounded-3xl relative overflow-hidden group">
-                <div className="absolute -top-4 -right-2 text-[120px] leading-none text-green-900/20 font-serif select-none pointer-events-none group-hover:text-green-800/30 transition-all">&quot;</div>
-                <div className="flex gap-1 mb-6">
-                  {[...Array(5)].map((_, i) => (
-                    <span key={i} className="text-amber-400 text-sm">★</span>
-                  ))}
-                </div>
-                <p className="text-gray-200 text-lg md:text-xl font-medium mb-10 leading-relaxed relative z-10 italic">
-                  &quot;I didn&apos;t know I was missing so many soft skills for Google PM. PlacementIQ&apos;s analysis was really eye-opening and practical.&quot;
-                </p>
-                <div className="flex items-center gap-4 border-t border-gray-800/50 pt-6">
-                  <div className="w-12 h-12 rounded-full bg-green-900 flex items-center justify-center text-lg font-bold border-2 border-green-700">PK</div>
-                  <div>
-                    <p className="font-bold text-white">Priya Kaur</p>
-                    <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">3rd Year IT · NIT Jalandhar</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* Dynamic Final CTA */}
         <section className="px-4 py-32 bg-gradient-to-b from-gray-950 to-gray-900 flex flex-col items-center">
