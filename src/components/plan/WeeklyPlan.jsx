@@ -74,7 +74,7 @@ export default function WeeklyPlan({ plan }) {
                     href={task.resource}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-[#006633] hover:underline whitespace-nowrap"
+                    className="text-green-400 hover:text-green-300 text-xs font-medium"
                   >
                     View Resource →
                   </a>

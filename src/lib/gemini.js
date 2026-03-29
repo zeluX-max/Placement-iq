@@ -227,6 +227,25 @@ export async function generateStudyPlan(studentProfile, gapAnalysis) {
     Student: ${JSON.stringify(studentProfile)}
     Gaps: ${JSON.stringify(gapAnalysis)}
     Return ONLY JSON, 2 weeks, 2 tasks each, under 10 words per task:
+
+    For the "resource" field, use these exact roadmap.sh URLs based on the task topic:
+    - Java/Spring: https://roadmap.sh/java
+    - Python: https://roadmap.sh/python  
+    - JavaScript: https://roadmap.sh/javascript
+    - React: https://roadmap.sh/react
+    - Node.js: https://roadmap.sh/nodejs
+    - SQL/Database: https://roadmap.sh/sql
+    - DSA: https://roadmap.sh/datastructures-and-algorithms
+    - System Design: https://roadmap.sh/system-design
+    - DevOps: https://roadmap.sh/devops
+    - Backend: https://roadmap.sh/backend
+    - Frontend: https://roadmap.sh/frontend
+    - Git: https://roadmap.sh/git-github
+    - Docker: https://roadmap.sh/docker
+    - AWS/Cloud: https://roadmap.sh/aws
+    - Cybersecurity: https://roadmap.sh/cyber-security
+    If no exact match, use https://roadmap.sh
+
     {
       "totalHours":0,
       "targetCompany":"",
