@@ -110,9 +110,12 @@ export default function CompanyCard({ company, type = 'ready' }) {
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
-                className="mt-3 bg-indigo-950/20 border border-indigo-900/30 rounded-lg p-3 text-xs text-indigo-200/90 leading-relaxed"
+                className="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-gray-700 leading-relaxed"
               >
-                {company.topperTip}
+                <div className="flex items-start gap-2">
+                  <span className="text-amber-500 font-bold">•</span>
+                  <span>{company.topperTip}</span>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
