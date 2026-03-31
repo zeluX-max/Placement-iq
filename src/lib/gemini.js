@@ -14,15 +14,19 @@ function getGroqClient() {
 }
 
 async function generateWithGroq(prompt) {
-  const response = await getGroqClient().chat.completions.create({
-    model: "llama-3.3-70b-versatile",
-    messages: [{ role: "user", content: prompt }],
-    max_tokens: 4000,
-    temperature: 0.3,
-    response_format: { type: "json_object" },
-  });
-
-  return response.choices[0].message.content;
+  try {
+    const response = await getGroqClient().chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 8000,  // ← increase from 4000
+      temperature: 0.3,
+      response_format: { type: "json_object" }
+    })
+    return response.choices[0].message.content
+  } catch (err) {
+    console.error('Groq API error:', err.message)
+    throw new Error('Analysis service temporarily unavailable')
+  }
 }
 
 export function safeParseJSON(text) {
@@ -837,25 +841,38 @@ export async function analyzeProfile(studentProfile, companies) {
     requiredSkills: company.requiredSkills,
     rounds: company.rounds,
     topperTip: company.topperTip,
-  }));
+  }))
 
   const text = await generateWithGroq(`
     IMPORTANT: Respond with ONLY a JSON object. No explanation, no markdown.
-    You are a placement advisor for NIT Jalandhar.
-    Student: ${JSON.stringify(studentProfile)}
-    Companies: ${JSON.stringify(slimCompanies)}
-    Return ONLY JSON, max 4 ready, 5 stretch, 2 future:
-    {
-      "ready":[{"name":"","role":"","avgPackage":"","rounds":[],"topperTip":""}],
-      "stretch":[{"name":"","role":"","avgPackage":"","missingSkills":[],"gapSize":"","topperTip":""}],
-      "future":[{"name":"","role":"","avgPackage":"","missingSkills":[]}],
-      "strengthSummary":"",
-      "topSkillGaps":[],
-      "urgentActions":[]
-    }
-  `);
+    You are a placement advisor for NIT Jalandhar students.
 
-  return safeParseJSON(text);
+    Student Profile:
+    ${JSON.stringify(studentProfile)}
+
+    Company Database (53 companies):
+    ${JSON.stringify(slimCompanies)}
+
+    MATCHING RULES — be generous and realistic:
+    - ready: student meets minCGPA AND has 70%+ of requiredSkills
+    - stretch: student meets minCGPA BUT has 40-69% of requiredSkills
+    - future: student does NOT meet minCGPA OR has less than 40% skills
+
+    Return ALL matching companies — do not limit the count artificially.
+    A strong student should have 10-20 ready companies.
+
+    Return ONLY this JSON structure:
+    {
+      "ready": [{"name":"","role":"","avgPackage":"","rounds":[],"topperTip":""}],
+      "stretch": [{"name":"","role":"","avgPackage":"","missingSkills":[],"gapSize":"small|medium|large","topperTip":""}],
+      "future": [{"name":"","role":"","avgPackage":"","missingSkills":[]}],
+      "strengthSummary": "2 sentences about what this student is good at",
+      "topSkillGaps": ["top 3 missing skills"],
+      "urgentActions": ["3 specific things to do this week"]
+    }
+  `)
+
+  return safeParseJSON(text)
 }
 
 export async function generateStudyPlan(studentProfile, gapAnalysis) {
