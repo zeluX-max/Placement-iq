@@ -904,7 +904,7 @@ export async function analyzeProfile(studentProfile, companies) {
     You are a placement advisor for NIT Jalandhar.
     Student: ${JSON.stringify(studentProfile)}
     Companies: ${JSON.stringify(slimCompanies)}
-    Return ONLY JSON, max 4 ready, 6 stretch, 2 future:
+    Return ONLY JSON, max 4 ready, 5 stretch, 2 future:
     {
       "ready":[{"name":"","role":"","avgPackage":"","rounds":[],"topperTip":""}],
       "stretch":[{"name":"","role":"","avgPackage":"","missingSkills":[],"gapSize":"","topperTip":""}],

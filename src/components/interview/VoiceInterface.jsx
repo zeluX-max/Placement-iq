@@ -1,10 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useConversation } from '@elevenlabs/react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-export default function VoiceInterface({ onInterviewEnd }) {
+export default function VoiceInterface({ 
+  onInterviewEnd, 
+  company, 
+  role, 
+  focus 
+}) {
   const [transcript, setTranscript] = useState([])
   
   const conversation = useConversation({
@@ -21,8 +26,6 @@ export default function VoiceInterface({ onInterviewEnd }) {
     onDisconnect: () => {
       // Small delay to let final state updates settle
       setTimeout(() => {
-        // We use a trick to get the most recent state by using setTranscript 
-        // with a functional update that doesn't change anything
         setTranscript(prev => {
           onInterviewEnd(prev)
           return prev
@@ -35,13 +38,16 @@ export default function VoiceInterface({ onInterviewEnd }) {
 
   const handleStart = async () => {
     try {
-      // Request microphone access
       await navigator.mediaDevices.getUserMedia({ audio: true })
       
-      // Starts the conversation with the ElevenLabs Agent
-      // Replace with your actual Agent ID from the ElevenLabs dashboard
+      // Pass the variables into the ElevenLabs session
       await conversation.startSession({
         agentId: process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID,
+        dynamicVariables: {
+          company: company,
+          role: role,
+          focus: focus
+        }
       })
     } catch (error) {
       console.error('Failed to start interview:', error)
