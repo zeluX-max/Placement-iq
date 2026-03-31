@@ -19,7 +19,7 @@ export async function POST(req) {
       .from('students')
       .upsert({
         user_id: session.user.id,
-        name: profile.name,
+        name: session.user.user_metadata?.full_name || profile.name || 'Anonymous',
         cgpa: profile.cgpa,
         skills: profile.skills || [],
         ready_companies: gapAnalysis.ready ? gapAnalysis.ready.map(c => c.name) : [],
