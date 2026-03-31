@@ -94,7 +94,7 @@ export async function analyzeProfile(studentProfile, companies) {
     You are a placement advisor for NIT Jalandhar.
     Student: ${JSON.stringify(studentProfile)}
     Companies: ${JSON.stringify(slimCompanies)}
-    Return ONLY JSON, max 3 ready, 2 stretch, 2 future:
+    Return ONLY JSON, max 4 ready, 6 stretch, 2 future:
     {
       "ready":[{"name":"","role":"","avgPackage":"","rounds":[],"topperTip":""}],
       "stretch":[{"name":"","role":"","avgPackage":"","missingSkills":[],"gapSize":"","topperTip":""}],
@@ -113,7 +113,7 @@ export async function generateStudyPlan(studentProfile, gapAnalysis) {
     You are a placement coach for NIT Jalandhar.
     Student: ${JSON.stringify(studentProfile)}
     Gaps: ${JSON.stringify(gapAnalysis)}
-    Return ONLY JSON, 2 weeks, 2 tasks each, under 10 words per task:
+    Return ONLY JSON, 4 weeks, 4 tasks each, under 10 words per task:
 
     For the "resource" field, use these exact roadmap.sh URLs based on the task topic:
     - Java/Spring: https://roadmap.sh/java
