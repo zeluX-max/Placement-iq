@@ -1,5 +1,5 @@
 import Groq from "groq-sdk";
-import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
+import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.js";
 import { parseProfileFromPDF as parseProfileFromPDFLegacy } from "../../gemini_old.js";
 
 let groqClient;
