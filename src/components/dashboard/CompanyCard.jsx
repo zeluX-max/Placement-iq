@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import SkillBadge from '@/components/dashboard/SkillBadge'
-import { ChevronDown, MapPin, Briefcase, IndianRupee, Info } from 'lucide-react'
+import { ChevronDown, MapPin, Briefcase, Info } from 'lucide-react'
 
 /**
  * CompanyCard component displays individual recruiter information.
@@ -29,35 +28,37 @@ export default function CompanyCard({ company, type = 'ready' }) {
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
+      // CRITICAL FIX: Removed the unhandled 'exit' prop that was breaking the layout
       transition={{ duration: 0.3, ease: 'easeOut' }}
       className={`
         bg-gray-900 border border-gray-800 rounded-xl p-4 md:p-5 
         border-l-4 ${borderColors[type]} ${bgHover[type]}
-        transition-all cursor-pointer group shadow-lg
+        transition-all cursor-pointer group shadow-lg overflow-hidden
       `}
       onClick={() => setExpanded(!expanded)}
     >
       <div className="flex justify-between items-start gap-3">
-        <div className="flex-1">
+        {/* CRITICAL FIX: Added min-w-0 to prevent long company names from breaking the flex container */}
+        <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-sm md:text-base font-bold text-white group-hover:text-green-400 transition-colors">
+            <h3 className="text-sm md:text-base font-bold text-white group-hover:text-green-400 transition-colors truncate">
               {company.name}
             </h3>
             {type === 'ready' && (
-              <span className="bg-green-950/50 text-green-400 text-[8px] uppercase px-1.5 py-0.5 rounded border border-green-900">
+              <span className="bg-green-950/50 text-green-400 text-[8px] uppercase px-1.5 py-0.5 rounded border border-green-900 shrink-0">
                 Ready
               </span>
             )}
           </div>
-          <p className="text-xs text-gray-400 flex items-center gap-1.5 mb-3">
-            <Briefcase size={12} className="text-gray-500" />
-            {company.role}
+          <p className="text-xs text-gray-400 flex items-center gap-1.5 mb-3 truncate">
+            <Briefcase size={12} className="text-gray-500 shrink-0" />
+            <span className="truncate">{company.role}</span>
           </p>
         </div>
-        <div className="text-right">
-          <div className="text-xs md:text-sm font-bold text-green-500 flex items-center justify-end">
-            <IndianRupee size={12} />
+        <div className="text-right shrink-0">
+          <div className="text-xs md:text-sm font-bold text-green-500 flex items-center justify-end gap-1">
+            {/* CRITICAL FIX: Replaced lucide-react IndianRupee with a raw symbol to prevent import crashes */}
+            <span className="text-xs">₹</span>
             {company.avgPackage}
           </div>
           <p className="text-[10px] text-gray-500 mt-0.5">Avg. Package</p>
@@ -72,8 +73,8 @@ export default function CompanyCard({ company, type = 'ready' }) {
           </div>
           <span className="text-[10px] text-gray-500 uppercase tracking-wider font-medium">Rounds</span>
         </div>
-        <div className="flex items-center gap-2">
-          <MapPin size={12} className="text-gray-600" />
+        <div className="flex items-center gap-2 overflow-hidden">
+          <MapPin size={12} className="text-gray-600 shrink-0" />
           <span className="text-[10px] text-gray-500 truncate">{company.location || 'Pan India'}</span>
         </div>
       </div>
