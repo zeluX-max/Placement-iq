@@ -20,7 +20,7 @@ export default function Navbar() {
 
   const navLinks = [
     { name: 'How it works', href: '/home#how' },
-    { name: 'Leaderboard', href: '/results#leaderboard' },
+    { name: 'Leaderboard', href: '/leaderboard' },
     { name: 'AI Interview', href: '/interview' },
   ];
 
