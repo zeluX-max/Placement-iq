@@ -70,7 +70,7 @@ export default function LinkedInUpload({ onProfileReady }) {
         )}
 
         <div className="mt-4 p-3 bg-amber-950/30 border border-amber-900/50 rounded-lg">
-          <p className="text-[10px] text-amber-500 leading-relaxed text-center">
+          <p className="text-[10px] text-black leading-relaxed text-center">
             ⚠️ Chrome/Edge recommended for full voice feature support in the interview phase.
           </p>
         </div>
