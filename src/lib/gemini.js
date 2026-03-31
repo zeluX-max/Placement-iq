@@ -44,21 +44,17 @@ export function safeParseJSON(text) {
 }
 
 async function extractTextFromPDF(base64PDF) {
-  const buffer = Buffer.from(base64PDF, "base64");
+  const cleanBase64 = base64PDF.replace(/^data:application\/[a-zA-Z0-9+-.]+;base64,/, "");
+  const buffer = Buffer.from(cleanBase64, "base64");
   const uint8 = new Uint8Array(buffer);
-  const pdf = await pdfjsLib.getDocument({ data: uint8 }).promise;
-  const allLines = [];
-
-  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum += 1) {
-    const cleanBase64 = base64PDF.replace(/^data:application\/[a-zA-Z0-9+-.]+;base64,/, "");
-    const buffer = Buffer.from(cleanBase64, "base64");
-    const uint8 = new Uint8Array(buffer);
-    const pdf = await pdfjsLib.getDocument({ 
+  const pdf = await pdfjsLib.getDocument({
     data: uint8,
     disableFontFace: true,
     verbosity: 0 // Suppresses unnecessary console warnings
   }).promise;
+  const allLines = [];
 
+  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum += 1) {
     const page = await pdf.getPage(pageNum);
     const content = await page.getTextContent({ normalizeWhitespace: true });
     const pageWidth = page.getViewport({ scale: 1 }).width;
