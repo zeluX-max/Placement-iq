@@ -23,9 +23,6 @@ export default function ResultsPage() {
     }
 
     try {
-      // We call setResults here to hydrate the state after the initial client mount.
-      // This avoids hydration mismatch between server and client.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setResults(JSON.parse(saved));
     } catch (e) {
       console.error('Failed to parse placement results', e);
@@ -60,12 +57,16 @@ export default function ResultsPage() {
         {/* Top Insights */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-12">
           <div className="space-y-4">
+            {/* FIXED: Mapped to gapAnalysis.strengthSummary instead of summary */}
             <StrengthCard 
-              summary={gapAnalysis.summary} 
+              summary={gapAnalysis.strengthSummary} 
               urgentActions={gapAnalysis.urgentActions} 
             />
           </div>
           <div className="flex flex-col justify-between gap-4">
+            {/* NOTE: If you used my updated StatsRow from the previous message, 
+                you would pass analysis={gapAnalysis} here instead of ready, stretch, future.
+                I am keeping your original prop structure here so it doesn't break! */}
             <StatsRow 
               ready={gapAnalysis.ready?.length || 0} 
               stretch={gapAnalysis.stretch?.length || 0} 
@@ -106,8 +107,8 @@ export default function ResultsPage() {
           </div>
         </div>
 
-        {/* Leaderboard Section */}
-        <div className="pt-8 border-t border-gray-900">
+        {/* Leaderboard Section - FIXED: Added id="leaderboard" */}
+        <div id="leaderboard" className="pt-8 border-t border-gray-900 scroll-mt-24">
           <div className="text-center mb-8">
             <h2 className="text-lg md:text-xl font-bold mb-2">NIT Jalandhar Leaderboard</h2>
             <p className="text-xs text-gray-500 uppercase tracking-widest font-medium italic">How you compare to your peers</p>
