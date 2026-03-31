@@ -59,7 +59,7 @@ export async function parseProfileFromPDF(base64PDF) {
     {
       text: `Extract this profile and return ONLY valid JSON, no markdown:
       {
-        "name": "",
+        
         "cgpa": null,
         "yearOfStudy": "",
         "skills": [],
