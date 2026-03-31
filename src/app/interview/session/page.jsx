@@ -64,7 +64,13 @@ export default function InterviewSessionPage() {
         transition={{ delay: 0.2 }}
         className="w-full"
       >
-        <VoiceInterface onInterviewEnd={handleInterviewEnd} />
+        {/* Pass the meta variables as props here */}
+        <VoiceInterface 
+          onInterviewEnd={handleInterviewEnd} 
+          company={meta.company}
+          role={meta.role}
+          focus={meta.focus}
+        />
       </motion.div>
 
       {/* Safety Back Button */}
