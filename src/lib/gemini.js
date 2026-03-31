@@ -1,6 +1,5 @@
 import Groq from "groq-sdk";
-import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.js";
-import { parseProfileFromPDF as parseProfileFromPDFLegacy } from "../../gemini_old.js";
+import pdfParse from "pdf-parse";
 
 let groqClient;
 
@@ -46,67 +45,8 @@ export function safeParseJSON(text) {
 async function extractTextFromPDF(base64PDF) {
   const cleanBase64 = base64PDF.replace(/^data:application\/[a-zA-Z0-9+-.]+;base64,/, "");
   const buffer = Buffer.from(cleanBase64, "base64");
-  const uint8 = new Uint8Array(buffer);
-  const pdf = await pdfjsLib.getDocument({
-    data: uint8,
-    disableFontFace: true,
-    verbosity: 0 // Suppresses unnecessary console warnings
-  }).promise;
-  const allLines = [];
-
-  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum += 1) {
-    const page = await pdf.getPage(pageNum);
-    const content = await page.getTextContent({ normalizeWhitespace: true });
-    const pageWidth = page.getViewport({ scale: 1 }).width;
-    const items = content.items.filter((item) => item.str && item.str.trim());
-    const lineMap = new Map();
-
-    for (const item of items) {
-      const y = Math.round(item.transform[5] / 3) * 3;
-      if (!lineMap.has(y)) lineMap.set(y, []);
-      lineMap.get(y).push({ str: item.str, x: item.transform[4] });
-    }
-
-    const sortedYs = [...lineMap.keys()].sort((a, b) => b - a);
-    const pageLines = [];
-
-    if (detectTwoColumn(items, pageWidth)) {
-      const midX = pageWidth * 0.48;
-      const leftColumn = [];
-      const rightColumn = [];
-
-      for (const y of sortedYs) {
-        const row = lineMap.get(y).sort((a, b) => a.x - b.x);
-        const left = row.filter((item) => item.x < midX);
-        const right = row.filter((item) => item.x >= midX);
-
-        if (left.length) leftColumn.push(left.map((item) => item.str).join(" "));
-        if (right.length)
-          rightColumn.push(right.map((item) => item.str).join(" "));
-      }
-
-      pageLines.push(...leftColumn, ...rightColumn);
-    } else {
-      for (const y of sortedYs) {
-        const row = lineMap.get(y).sort((a, b) => a.x - b.x);
-        pageLines.push(row.map((item) => item.str).join(" "));
-      }
-    }
-
-    allLines.push(...pageLines, "");
-  }
-
-  return allLines.join("\n");
-}
-
-function detectTwoColumn(items, pageWidth) {
-  const midLeft = pageWidth * 0.35;
-  const midRight = pageWidth * 0.65;
-  const middleItems = items.filter(
-    (item) => item.transform[4] >= midLeft && item.transform[4] <= midRight,
-  );
-
-  return middleItems.length < items.length * 0.1;
+  const { text } = await pdfParse(buffer);
+  return text;
 }
 
 function normalize(text) {
@@ -871,25 +811,20 @@ function hasMeaningfulProfileData(profile) {
 }
 
 export async function parseProfileFromPDF(base64PDF) {
-  try {
-    const rawText = await extractTextFromPDF(base64PDF);
-    const text = normalize(rawText);
+  const rawText = await extractTextFromPDF(base64PDF);
+  const text = normalize(rawText);
 
-    if (!text || text.length < 40) {
-      throw new Error("PDF.js extraction returned too little text.");
-    }
-
-    const profileData = buildProfileData(text);
-
-    if (!hasMeaningfulProfileData(profileData)) {
-      throw new Error("Structured parsing did not produce usable profile data.");
-    }
-
-    return JSON.stringify(profileData, null, 2);
-  } catch (error) {
-    console.warn("Primary PDF parser failed, falling back to legacy parser:", error);
-    return parseProfileFromPDFLegacy(base64PDF);
+  if (!text || text.length < 40) {
+    throw new Error("PDF extraction returned too little text. The file may be image-based or corrupt.");
   }
+
+  const profileData = buildProfileData(text);
+
+  if (!hasMeaningfulProfileData(profileData)) {
+    throw new Error("Could not extract meaningful profile data from this PDF.");
+  }
+
+  return JSON.stringify(profileData, null, 2);
 }
 
 export async function analyzeProfile(studentProfile, companies) {
