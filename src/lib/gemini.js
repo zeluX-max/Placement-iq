@@ -1,5 +1,6 @@
 import Groq from "groq-sdk";
-import pdfParse from "pdf-parse";
+import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.js";
+import { parseProfileFromPDF as parseProfileFromPDFLegacy } from "../../gemini_old.js";
 
 let groqClient;
 
@@ -14,19 +15,15 @@ function getGroqClient() {
 }
 
 async function generateWithGroq(prompt) {
-  try {
-    const response = await getGroqClient().chat.completions.create({
-      model: "llama-3.3-70b-versatile",
-      messages: [{ role: "user", content: prompt }],
-      max_tokens: 8000,  // ← increase from 4000
-      temperature: 0.3,
-      response_format: { type: "json_object" }
-    })
-    return response.choices[0].message.content
-  } catch (err) {
-    console.error('Groq API error:', err.message)
-    throw new Error('Analysis service temporarily unavailable')
-  }
+  const response = await getGroqClient().chat.completions.create({
+    model: "llama-3.3-70b-versatile",
+    messages: [{ role: "user", content: prompt }],
+    max_tokens: 4000,
+    temperature: 0.3,
+    response_format: { type: "json_object" },
+  });
+
+  return response.choices[0].message.content;
 }
 
 export function safeParseJSON(text) {
@@ -47,10 +44,64 @@ export function safeParseJSON(text) {
 }
 
 async function extractTextFromPDF(base64PDF) {
-  const cleanBase64 = base64PDF.replace(/^data:application\/[a-zA-Z0-9+-.]+;base64,/, "");
-  const buffer = Buffer.from(cleanBase64, "base64");
-  const { text } = await pdfParse(buffer);
-  return text;
+  const buffer = Buffer.from(base64PDF, "base64");
+  const uint8 = new Uint8Array(buffer);
+  const pdf = await pdfjsLib.getDocument({ data: uint8 }).promise;
+  const allLines = [];
+
+  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum += 1) {
+    const page = await pdf.getPage(pageNum);
+    const content = await page.getTextContent({ normalizeWhitespace: true });
+    const pageWidth = page.getViewport({ scale: 1 }).width;
+    const items = content.items.filter((item) => item.str && item.str.trim());
+    const lineMap = new Map();
+
+    for (const item of items) {
+      const y = Math.round(item.transform[5] / 3) * 3;
+      if (!lineMap.has(y)) lineMap.set(y, []);
+      lineMap.get(y).push({ str: item.str, x: item.transform[4] });
+    }
+
+    const sortedYs = [...lineMap.keys()].sort((a, b) => b - a);
+    const pageLines = [];
+
+    if (detectTwoColumn(items, pageWidth)) {
+      const midX = pageWidth * 0.48;
+      const leftColumn = [];
+      const rightColumn = [];
+
+      for (const y of sortedYs) {
+        const row = lineMap.get(y).sort((a, b) => a.x - b.x);
+        const left = row.filter((item) => item.x < midX);
+        const right = row.filter((item) => item.x >= midX);
+
+        if (left.length) leftColumn.push(left.map((item) => item.str).join(" "));
+        if (right.length)
+          rightColumn.push(right.map((item) => item.str).join(" "));
+      }
+
+      pageLines.push(...leftColumn, ...rightColumn);
+    } else {
+      for (const y of sortedYs) {
+        const row = lineMap.get(y).sort((a, b) => a.x - b.x);
+        pageLines.push(row.map((item) => item.str).join(" "));
+      }
+    }
+
+    allLines.push(...pageLines, "");
+  }
+
+  return allLines.join("\n");
+}
+
+function detectTwoColumn(items, pageWidth) {
+  const midLeft = pageWidth * 0.35;
+  const midRight = pageWidth * 0.65;
+  const middleItems = items.filter(
+    (item) => item.transform[4] >= midLeft && item.transform[4] <= midRight,
+  );
+
+  return middleItems.length < items.length * 0.1;
 }
 
 function normalize(text) {
@@ -815,20 +866,25 @@ function hasMeaningfulProfileData(profile) {
 }
 
 export async function parseProfileFromPDF(base64PDF) {
-  const rawText = await extractTextFromPDF(base64PDF);
-  const text = normalize(rawText);
+  try {
+    const rawText = await extractTextFromPDF(base64PDF);
+    const text = normalize(rawText);
 
-  if (!text || text.length < 40) {
-    throw new Error("PDF extraction returned too little text. The file may be image-based or corrupt.");
+    if (!text || text.length < 40) {
+      throw new Error("PDF.js extraction returned too little text.");
+    }
+
+    const profileData = buildProfileData(text);
+
+    if (!hasMeaningfulProfileData(profileData)) {
+      throw new Error("Structured parsing did not produce usable profile data.");
+    }
+
+    return JSON.stringify(profileData, null, 2);
+  } catch (error) {
+    console.warn("Primary PDF parser failed, falling back to legacy parser:", error);
+    return parseProfileFromPDFLegacy(base64PDF);
   }
-
-  const profileData = buildProfileData(text);
-
-  if (!hasMeaningfulProfileData(profileData)) {
-    throw new Error("Could not extract meaningful profile data from this PDF.");
-  }
-
-  return JSON.stringify(profileData, null, 2);
 }
 
 export async function analyzeProfile(studentProfile, companies) {
@@ -841,38 +897,25 @@ export async function analyzeProfile(studentProfile, companies) {
     requiredSkills: company.requiredSkills,
     rounds: company.rounds,
     topperTip: company.topperTip,
-  }))
+  }));
 
   const text = await generateWithGroq(`
     IMPORTANT: Respond with ONLY a JSON object. No explanation, no markdown.
-    You are a placement advisor for NIT Jalandhar students.
-
-    Student Profile:
-    ${JSON.stringify(studentProfile)}
-
-    Company Database (53 companies):
-    ${JSON.stringify(slimCompanies)}
-
-    MATCHING RULES — be generous and realistic:
-    - ready: student meets minCGPA AND has 70%+ of requiredSkills
-    - stretch: student meets minCGPA BUT has 40-69% of requiredSkills
-    - future: student does NOT meet minCGPA OR has less than 40% skills
-
-    Return ALL matching companies — do not limit the count artificially.
-    A strong student should have 10-20 ready companies.
-
-    Return ONLY this JSON structure:
+    You are a placement advisor for NIT Jalandhar.
+    Student: ${JSON.stringify(studentProfile)}
+    Companies: ${JSON.stringify(slimCompanies)}
+    Return ONLY JSON, max 4 ready, 5 stretch, 2 future:
     {
-      "ready": [{"name":"","role":"","avgPackage":"","rounds":[],"topperTip":""}],
-      "stretch": [{"name":"","role":"","avgPackage":"","missingSkills":[],"gapSize":"small|medium|large","topperTip":""}],
-      "future": [{"name":"","role":"","avgPackage":"","missingSkills":[]}],
-      "strengthSummary": "2 sentences about what this student is good at",
-      "topSkillGaps": ["top 3 missing skills"],
-      "urgentActions": ["3 specific things to do this week"]
+      "ready":[{"name":"","role":"","avgPackage":"","rounds":[],"topperTip":""}],
+      "stretch":[{"name":"","role":"","avgPackage":"","missingSkills":[],"gapSize":"","topperTip":""}],
+      "future":[{"name":"","role":"","avgPackage":"","missingSkills":[]}],
+      "strengthSummary":"",
+      "topSkillGaps":[],
+      "urgentActions":[]
     }
-  `)
+  `);
 
-  return safeParseJSON(text)
+  return safeParseJSON(text);
 }
 
 export async function generateStudyPlan(studentProfile, gapAnalysis) {
