@@ -1,35 +1,47 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
-// Define the routes that do NOT require login
-const isPublicRoute = createRouteMatcher(['/login(.*)', '/home(.*)']);
+/**
+ * 1. Define Public Routes
+ * These are accessible without logging in.
+ * Includes your landing page (/home) and your login/signup page (/login).
+ */
+const isPublicRoute = createRouteMatcher([
+  '/home(.*)', 
+  '/login(.*)',
+  '/api/public(.*)' // Optional: if you have public API routes later
+]);
 
 export default clerkMiddleware((auth, req) => {
   const { userId } = auth();
   const { pathname } = req.nextUrl;
 
-  // RULE 1: If a logged-in user tries to go to the login page, send them to the dashboard
+  // RULE 1: Redirect logged-in users away from the login page
+  // If they are already authenticated, send them to the root dashboard "/"
   if (userId && pathname.startsWith('/login')) {
     return NextResponse.redirect(new URL('/', req.url));
   }
 
-  // RULE 2: If the user is NOT logged in and tries to access a protected route
+  // RULE 2: Handle unauthenticated users
   if (!userId && !isPublicRoute(req)) {
     
-    // If they hit the root URL "/", send them to your landing page
+    // If a guest hits the base URL "/", send them to the beautiful landing page
     if (pathname === '/') {
       return NextResponse.redirect(new URL('/home', req.url));
     }
     
-    // For any other protected route, send them to the login page
+    // For any other protected folder (like /dashboard or /interview), 
+    // send them to the login screen
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
-  // Allow the request to continue normally
   return NextResponse.next();
 });
 
 export const config = {
-  // Clerk's standard matcher catches all routes except static files and internals
+  /**
+   * The matcher tells Next.js which files this middleware should run on.
+   * This pattern excludes static files (images, css) and Next.js internals.
+   */
   matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
 };
