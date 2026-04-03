@@ -1,25 +1,24 @@
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createClient } from '@supabase/supabase-js';
+import { auth } from '@clerk/nextjs/server';
 
 export async function supabaseServer() {
-  const cookieStore = await cookies()
+  // 1. Get the Clerk auth context on the server
+  const { getToken } = auth();
 
-  return createServerClient(
+  // 2. Request the special Supabase token from Clerk
+  const token = await getToken({ template: 'supabase' });
+
+  // 3. Set the Authorization header if the user is logged in
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+  // 4. Return the authenticated Supabase client
+  return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          } catch {}
-        }
-      }
+      global: {
+        headers,
+      },
     }
-  )
+  );
 }
