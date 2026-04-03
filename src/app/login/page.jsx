@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { SignIn, SignUp } from "@clerk/nextjs"
 
 const clerkAppearance = {
@@ -24,25 +24,14 @@ const clerkAppearance = {
     footerActionLink: "text-brand-green hover:text-green-700 font-bold transition-colors",
     dividerLine: "bg-slate-200",
     dividerText: "text-slate-400 text-[10px] font-black uppercase tracking-widest",
-    formFieldLabel: "text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 ml-1"
+    formFieldLabel: "text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 ml-1",
+    // Hide Clerk's built-in footer toggle since we handle it ourselves
+    footer: "hidden"
   }
 }
 
 export default function LoginPage() {
   const [mode, setMode] = useState('sign-in')
-
-  // Listen for hash changes so Clerk's internal "Sign up" link works
-  useEffect(() => {
-    const updateMode = () => {
-      setMode(window.location.hash.includes('sign-up') ? 'sign-up' : 'sign-in')
-    }
-
-    // Check on mount
-    updateMode()
-
-    window.addEventListener('hashchange', updateMode)
-    return () => window.removeEventListener('hashchange', updateMode)
-  }, [])
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#1E293B] flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden transition-all">
@@ -62,21 +51,43 @@ export default function LoginPage() {
         </p>
       </div>
 
-      {/* Clerk Auth Component — switches between SignIn and SignUp */}
+      {/* Mode Toggle */}
+      <div className="flex bg-white rounded-2xl border border-slate-200 p-1 gap-1 mb-8 z-10 animate-fadeInUp shadow-sm" style={{ animationDelay: '0.05s' }}>
+        <button
+          onClick={() => setMode('sign-in')}
+          className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ${
+            mode === 'sign-in'
+              ? 'bg-brand-green text-white shadow-md shadow-green-500/20'
+              : 'text-slate-500 hover:text-slate-700'
+          }`}
+        >
+          Sign In
+        </button>
+        <button
+          onClick={() => setMode('sign-up')}
+          className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ${
+            mode === 'sign-up'
+              ? 'bg-brand-green text-white shadow-md shadow-green-500/20'
+              : 'text-slate-500 hover:text-slate-700'
+          }`}
+        >
+          Sign Up
+        </button>
+      </div>
+
+      {/* Clerk Auth Component — controlled by our toggle */}
       <div className="w-full max-w-md flex justify-center z-10 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
         {mode === 'sign-up' ? (
           <SignUp
             routing="hash"
-            signInUrl="/login"
-            afterSignUpUrl="/"
             appearance={clerkAppearance}
+            fallbackRedirectUrl="/"
           />
         ) : (
           <SignIn
             routing="hash"
-            signUpUrl="/login#/sign-up"
-            afterSignInUrl="/"
             appearance={clerkAppearance}
+            fallbackRedirectUrl="/"
           />
         )}
       </div>
