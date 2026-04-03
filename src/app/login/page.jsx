@@ -4,58 +4,58 @@ import { SignIn } from "@clerk/nextjs"
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-[#050505] text-white flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden transition-custom">
+    <div className="min-h-screen bg-[#F8FAFC] text-[#1E293B] flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden transition-all">
       
-      {/* Background Ambient Glow to match your 'Built for NIT Jalandhar' vibe */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-green/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-brand-green/5 to-transparent pointer-events-none" />
+      {/* Subtle Background Decoration */}
+      <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-brand-green/10 to-transparent pointer-events-none" />
+      <div className="absolute -top-24 -right-24 w-96 h-96 bg-brand-green/5 rounded-full blur-3xl pointer-events-none" />
 
       {/* Brand Header */}
       <div className="mb-10 text-center z-10 animate-fadeInUp">
-        <h1 className="text-5xl md:text-6xl font-black text-white tracking-tighter">
+        <h1 className="text-5xl md:text-6xl font-black text-[#0F172A] tracking-tighter">
           Placement<span className="text-brand-green">IQ</span>
         </h1>
-        <div className="h-1.5 w-12 bg-brand-green mx-auto mt-4 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.5)]" />
-        <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.3em] mt-6 opacity-80">
+        <div className="h-1.5 w-12 bg-brand-green mx-auto mt-4 rounded-full" />
+        <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.3em] mt-6">
           N.I.T. Jalandhar Official Portal
         </p>
       </div>
 
-      {/* Fully Styled Clerk Component */}
+      {/* High-Contrast Light Clerk Component */}
       <div className="w-full max-w-md flex justify-center z-10 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
         <SignIn 
           routing="hash" 
           signUpUrl="/login"
           appearance={{
             variables: {
-              colorPrimary: '#22c55e', // Your brand-green
-              colorBackground: '#0a0a0a', 
-              colorText: '#ffffff',
-              colorTextSecondary: '#94a3b8',
-              colorInputBackground: '#171717',
-              colorInputText: '#ffffff',
+              colorPrimary: '#22c55e', 
+              colorBackground: '#ffffff', 
+              colorText: '#1e293b',
+              colorTextSecondary: '#64748b',
+              colorInputBackground: '#f1f5f9',
+              colorInputText: '#1e293b',
               borderRadius: '1rem',
             },
             elements: {
-              card: "bg-[#0a0a0a] border border-white/10 shadow-[0_0_60px_-15px_rgba(34,197,94,0.15)] p-2 backdrop-blur-xl",
-              headerTitle: "text-2xl font-black tracking-tight",
-              headerSubtitle: "hidden", // Removes generic Clerk greeting
-              socialButtonsBlockButton: "bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-300",
-              socialButtonsBlockButtonText: "font-bold text-sm",
-              formButtonPrimary: "bg-brand-green hover:bg-brand-green-hover font-black uppercase tracking-widest text-xs py-4 shadow-lg shadow-brand-green/20 active:scale-95 transition-all",
-              formFieldInput: "bg-white/5 border-white/10 focus:ring-brand-green focus:border-brand-green py-3.5 px-4 transition-all",
-              footerActionLink: "text-brand-green hover:text-brand-green-hover font-bold transition-colors",
-              dividerLine: "bg-white/10",
-              dividerText: "text-gray-600 text-[10px] font-black uppercase tracking-widest",
-              formFieldLabel: "text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1 ml-1"
+              card: "bg-white border border-slate-200 shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-2",
+              headerTitle: "text-2xl font-black tracking-tight text-slate-900",
+              headerSubtitle: "text-slate-500",
+              socialButtonsBlockButton: "bg-white border-slate-200 hover:bg-slate-50 transition-all duration-200",
+              socialButtonsBlockButtonText: "font-bold text-slate-700",
+              formButtonPrimary: "bg-brand-green hover:bg-brand-green-hover font-black uppercase tracking-widest text-xs py-4 shadow-lg shadow-green-500/20 active:scale-95 transition-all",
+              formFieldInput: "bg-slate-100 border-transparent focus:bg-white focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green py-3.5 px-4 transition-all",
+              footerActionLink: "text-brand-green hover:text-green-700 font-bold transition-colors",
+              dividerLine: "bg-slate-200",
+              dividerText: "text-slate-400 text-[10px] font-black uppercase tracking-widest",
+              formFieldLabel: "text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 ml-1"
             }
           }}
         />
       </div>
       
-      {/* Verification Footer */}
+      {/* Footer Instructions */}
       <div className="mt-12 text-center z-10 animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
-        <p className="text-gray-600 text-[10px] font-black uppercase tracking-[0.2em] opacity-60">
+        <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">
           Use your @nitj.ac.in email for verification
         </p>
       </div>
