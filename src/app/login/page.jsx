@@ -1,11 +1,52 @@
 'use client'
 
-import { SignIn } from "@clerk/nextjs"
+import { useState, useEffect } from 'react'
+import { SignIn, SignUp } from "@clerk/nextjs"
+
+const clerkAppearance = {
+  variables: {
+    colorPrimary: '#22c55e',
+    colorBackground: '#ffffff',
+    colorText: '#1e293b',
+    colorTextSecondary: '#64748b',
+    colorInputBackground: '#f1f5f9',
+    colorInputText: '#1e293b',
+    borderRadius: '1rem',
+  },
+  elements: {
+    card: "bg-white border border-slate-200 shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-2",
+    headerTitle: "text-2xl font-black tracking-tight text-slate-900",
+    headerSubtitle: "text-slate-500",
+    socialButtonsBlockButton: "bg-white border-slate-200 hover:bg-slate-50 transition-all duration-200",
+    socialButtonsBlockButtonText: "font-bold text-slate-700",
+    formButtonPrimary: "bg-brand-green hover:bg-brand-green-hover font-black uppercase tracking-widest text-xs py-4 shadow-lg shadow-green-500/20 active:scale-95 transition-all",
+    formFieldInput: "bg-slate-100 border-transparent focus:bg-white focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green py-3.5 px-4 transition-all",
+    footerActionLink: "text-brand-green hover:text-green-700 font-bold transition-colors",
+    dividerLine: "bg-slate-200",
+    dividerText: "text-slate-400 text-[10px] font-black uppercase tracking-widest",
+    formFieldLabel: "text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 ml-1"
+  }
+}
 
 export default function LoginPage() {
+  const [mode, setMode] = useState('sign-in')
+
+  // Listen for hash changes so Clerk's internal "Sign up" link works
+  useEffect(() => {
+    const updateMode = () => {
+      setMode(window.location.hash.includes('sign-up') ? 'sign-up' : 'sign-in')
+    }
+
+    // Check on mount
+    updateMode()
+
+    window.addEventListener('hashchange', updateMode)
+    return () => window.removeEventListener('hashchange', updateMode)
+  }, [])
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#1E293B] flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden transition-all">
-      
+
       {/* Subtle Background Decoration */}
       <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-brand-green/10 to-transparent pointer-events-none" />
       <div className="absolute -top-24 -right-24 w-96 h-96 bg-brand-green/5 rounded-full blur-3xl pointer-events-none" />
@@ -21,38 +62,25 @@ export default function LoginPage() {
         </p>
       </div>
 
-      {/* High-Contrast Light Clerk Component */}
+      {/* Clerk Auth Component — switches between SignIn and SignUp */}
       <div className="w-full max-w-md flex justify-center z-10 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-        <SignIn 
-          routing="hash" 
-          signUpUrl="/login"
-          appearance={{
-            variables: {
-              colorPrimary: '#22c55e', 
-              colorBackground: '#ffffff', 
-              colorText: '#1e293b',
-              colorTextSecondary: '#64748b',
-              colorInputBackground: '#f1f5f9',
-              colorInputText: '#1e293b',
-              borderRadius: '1rem',
-            },
-            elements: {
-              card: "bg-white border border-slate-200 shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-2",
-              headerTitle: "text-2xl font-black tracking-tight text-slate-900",
-              headerSubtitle: "text-slate-500",
-              socialButtonsBlockButton: "bg-white border-slate-200 hover:bg-slate-50 transition-all duration-200",
-              socialButtonsBlockButtonText: "font-bold text-slate-700",
-              formButtonPrimary: "bg-brand-green hover:bg-brand-green-hover font-black uppercase tracking-widest text-xs py-4 shadow-lg shadow-green-500/20 active:scale-95 transition-all",
-              formFieldInput: "bg-slate-100 border-transparent focus:bg-white focus:ring-2 focus:ring-brand-green/20 focus:border-brand-green py-3.5 px-4 transition-all",
-              footerActionLink: "text-brand-green hover:text-green-700 font-bold transition-colors",
-              dividerLine: "bg-slate-200",
-              dividerText: "text-slate-400 text-[10px] font-black uppercase tracking-widest",
-              formFieldLabel: "text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 ml-1"
-            }
-          }}
-        />
+        {mode === 'sign-up' ? (
+          <SignUp
+            routing="hash"
+            signInUrl="/login"
+            afterSignUpUrl="/"
+            appearance={clerkAppearance}
+          />
+        ) : (
+          <SignIn
+            routing="hash"
+            signUpUrl="/login#/sign-up"
+            afterSignInUrl="/"
+            appearance={clerkAppearance}
+          />
+        )}
       </div>
-      
+
       {/* Footer Instructions */}
       <div className="mt-12 text-center z-10 animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
         <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">
