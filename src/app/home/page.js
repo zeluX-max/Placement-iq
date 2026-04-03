@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useInView } from 'framer-motion';
 import Navbar from '@/components/layout/Navbar';
-import Leaderboard from '@/components/Leaderboard'; // Added Leaderboard import
+import Leaderboard from '@/components/leaderboard'; // Added Leaderboard import
 
 export default function HomePage() {
   const [stats, setStats] = useState({ companies: 0, results: 0 });
