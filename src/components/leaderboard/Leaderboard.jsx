@@ -22,9 +22,23 @@ export default function Leaderboard() {
     }
 
     const sorted = (data || []).sort((a, b) => {
-      const aLen = (a.ready_companies || []).length
-      const bLen = (b.ready_companies || []).length
-      if (aLen !== bLen) return bLen - aLen
+      const aReady = a.ready_companies || []
+      const bReady = b.ready_companies || []
+      
+      // Calculate max package for A
+      const aMaxPackage = aReady.length > 0 
+        ? Math.max(...aReady.map(c => c.package_lpa || 0)) 
+        : 0
+        
+      // Calculate max package for B
+      const bMaxPackage = bReady.length > 0 
+        ? Math.max(...bReady.map(c => c.package_lpa || 0)) 
+        : 0
+
+      // Sort by highest package first
+      if (aMaxPackage !== bMaxPackage) return bMaxPackage - aMaxPackage
+      
+      // Tie-breaker: CGPA
       return (b.cgpa || 0) - (a.cgpa || 0)
     })
 
@@ -77,7 +91,7 @@ export default function Leaderboard() {
           flex items-center justify-between">
           🏆 Student Leaderboard
           <span className="text-xs text-gray-500 font-normal">
-            Top 10 Readiness
+            Top 10 Packages
           </span>
         </h3>
       </div>
@@ -87,8 +101,13 @@ export default function Leaderboard() {
         <AnimatePresence>
           {students.map((student, index) => {
             const isCurrentUser = user && student.user_id === user.id
-            const readyCount = (student.ready_companies || []).length
-            const readinessPercent = Math.round((readyCount / 53) * 100)
+            const readyCompanies = student.ready_companies || []
+            const readyCount = readyCompanies.length
+            
+            // Find the highest package for this specific student
+            const highestPackage = readyCount > 0 
+              ? Math.max(...readyCompanies.map(c => c.package_lpa || 0))
+              : 0
 
             return (
               <motion.div
@@ -126,15 +145,15 @@ export default function Leaderboard() {
 
                 <div className="text-right">
                   <div className={`text-sm font-bold ${
-                    readinessPercent >= 70 ? 'text-green-400' :
-                    readinessPercent >= 40 ? 'text-amber-400' :
+                    highestPackage >= 20 ? 'text-green-400' :
+                    highestPackage >= 10 ? 'text-amber-400' :
                     'text-gray-100'
                   }`}>
-                    {readinessPercent}%
+                    {highestPackage > 0 ? `${highestPackage} LPA` : '-'}
                   </div>
                   <div className="text-[10px] text-gray-500 
                     uppercase tracking-tighter">
-                    Ready
+                    Max Package
                   </div>
                 </div>
               </motion.div>
