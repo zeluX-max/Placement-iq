@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
 import Navbar from '@/components/layout/Navbar';
+import Leaderboard from '@/components/Leaderboard'; // Added Leaderboard import
 
 export default function HomePage() {
   const [stats, setStats] = useState({ companies: 0, results: 0 });
@@ -216,10 +217,33 @@ export default function HomePage() {
                 className="px-8 py-3 bg-gray-900/60 hover:bg-gray-800 text-gray-400 text-sm font-bold rounded-full border border-gray-800 transition-custom hover:text-white hover:border-gray-500 active:scale-95 inline-flex items-center gap-2"
               >
                 View all 53 recruiters →
-              </Link>            </div>
+              </Link>
+            </div>
           </div>
         </section>
 
+        {/* Live Leaderboard Section */}
+        <section className="px-4 py-24 md:py-32 bg-gray-900/50 relative">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <div className="inline-block bg-purple-900/40 text-purple-300 rounded-full px-4 py-1.5 text-xs font-medium border border-purple-800/50 mb-4 animate-pulse">
+                Live Rankings
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">How do you stack up?</h2>
+              <p className="text-gray-400 text-sm max-w-md mx-auto leading-relaxed">
+                See real-time placement readiness scores from your peers at NIT Jalandhar.
+              </p>
+            </div>
+
+            {/* Render the Leaderboard Component */}
+            <div className="w-full flex justify-center">
+              <div className="w-full max-w-2xl transform hover:scale-[1.01] transition-transform duration-500">
+                <Leaderboard />
+              </div>
+            </div>
+            
+          </div>
+        </section>
 
         {/* Dynamic Final CTA */}
         <section className="px-4 py-32 bg-gradient-to-b from-gray-950 to-gray-900 flex flex-col items-center">

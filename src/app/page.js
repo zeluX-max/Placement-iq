@@ -99,7 +99,7 @@ export default function DashboardEntry() {
         </div>
 
         <div className="mt-16 text-center text-gray-500 text-xs font-bold uppercase tracking-widest opacity-50">
-          Built for NIT Jalandhar students · HackMol 7.0
+          Built for NIT Jalandhar students
         </div>
       </main>
     </div>
