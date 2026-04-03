@@ -5,15 +5,23 @@ import { supabase } from '@/lib/supabase'
 import { useUser } from '@/hooks/useUser'
 import { motion, AnimatePresence } from 'framer-motion'
 
+// Helper function to extract the number from strings like "8 LPA"
+const extractPackageNumber = (pkgString) => {
+  if (!pkgString) return 0;
+  const match = String(pkgString).match(/[\d.]+/);
+  return match ? parseFloat(match[0]) : 0;
+};
+
 export default function Leaderboard() {
   const { user } = useUser()
   const [students, setStudents] = useState([])
   const [loading, setLoading] = useState(true)
 
   const fetchStudents = async () => {
+    // Added gap_analysis to the select query to match your database structure
     const { data, error } = await supabase
       .from('students')
-      .select('id, name, user_id, ready_companies, cgpa')
+      .select('id, name, user_id, ready_companies, gap_analysis, cgpa')
 
     if (error) {
       console.error('Error fetching students:', error)
@@ -22,17 +30,18 @@ export default function Leaderboard() {
     }
 
     const sorted = (data || []).sort((a, b) => {
-      const aReady = a.ready_companies || []
-      const bReady = b.ready_companies || []
+      // Safely check if the data is in gap_analysis.ready or ready_companies
+      const aReady = a.gap_analysis?.ready || a.ready_companies || []
+      const bReady = b.gap_analysis?.ready || b.ready_companies || []
       
-      // Calculate max package for A
+      // Calculate max package for A using the avgPackage key
       const aMaxPackage = aReady.length > 0 
-        ? Math.max(...aReady.map(c => c.package_lpa || 0)) 
+        ? Math.max(...aReady.map(c => extractPackageNumber(c.avgPackage))) 
         : 0
         
-      // Calculate max package for B
+      // Calculate max package for B using the avgPackage key
       const bMaxPackage = bReady.length > 0 
-        ? Math.max(...bReady.map(c => c.package_lpa || 0)) 
+        ? Math.max(...bReady.map(c => extractPackageNumber(c.avgPackage))) 
         : 0
 
       // Sort by highest package first
@@ -101,12 +110,14 @@ export default function Leaderboard() {
         <AnimatePresence>
           {students.map((student, index) => {
             const isCurrentUser = user && student.user_id === user.id
-            const readyCompanies = student.ready_companies || []
+            
+            // Extract the companies array safely
+            const readyCompanies = student.gap_analysis?.ready || student.ready_companies || []
             const readyCount = readyCompanies.length
             
-            // Find the highest package for this specific student
+            // Find the highest package using the helper function
             const highestPackage = readyCount > 0 
-              ? Math.max(...readyCompanies.map(c => c.package_lpa || 0))
+              ? Math.max(...readyCompanies.map(c => extractPackageNumber(c.avgPackage)))
               : 0
 
             return (
