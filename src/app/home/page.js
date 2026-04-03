@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { motion, useInView } from 'framer-motion';
+import Image from 'next/image';
+import { useInView } from 'framer-motion';
 import Navbar from '@/components/layout/Navbar';
 import Leaderboard from '@/components/Leaderboard'; // Added Leaderboard import
 
@@ -197,11 +198,14 @@ export default function HomePage() {
               <div className="flex animate-marquee gap-12 md:gap-16 w-max py-4 items-center px-6">
                 {/* Duplicate for seamless loop */}
                 {[...companies5, ...companies5].map((company, i) => (
-                  <img
+                  <Image
                     key={i}
                     src={company.logo}
                     alt={company.name}
-                    className="h-12 md:h-16 object-contain opacity-80"
+                    width={100}
+                    height={40}
+                    className="h-12 md:h-16 w-auto object-contain opacity-80"
+                    unoptimized
                   />
                 ))}
               </div>
