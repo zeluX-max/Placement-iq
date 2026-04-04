@@ -10,9 +10,6 @@ export default function AuthLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#1E293B] flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden transition-all">
-      <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-brand-green/10 to-transparent pointer-events-none" />
-      <div className="absolute -top-24 -right-24 w-96 h-96 bg-brand-green/5 rounded-full blur-3xl pointer-events-none" />
-
       <div className="mb-10 text-center z-10 animate-fadeInUp">
         <h1 className="text-5xl md:text-6xl font-black text-[#0F172A] tracking-tighter">
           Placement<span className="text-brand-green">IQ</span>
