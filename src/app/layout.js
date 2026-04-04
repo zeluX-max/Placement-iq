@@ -16,13 +16,11 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
-    <html lang="en">
-      <body className={inter.className}>
-        <ClerkProvider>
+      <html lang="en">
+        <body className={inter.className}>
           {children}
-        </ClerkProvider>
-      </body>
-    </html>
+        </body>
+      </html>
     </ClerkProvider>
   )
 }

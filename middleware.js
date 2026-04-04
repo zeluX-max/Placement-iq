@@ -8,8 +8,8 @@ const isPublicRoute = createRouteMatcher([
   '/signup(.*)' 
 ]);
 
-export default clerkMiddleware((auth, req) => {
-  const { userId } = auth();
+export default clerkMiddleware(async (auth, req) => {
+  const { userId } = await auth();
   const { pathname } = req.nextUrl;
 
   // Redirect logged-in users away from auth pages
