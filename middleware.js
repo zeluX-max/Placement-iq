@@ -1,53 +1,33 @@
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
 
+// Define the routes that do NOT require login
+const isPublicRoute = createRouteMatcher([
+  '/home(.*)', 
+  '/login(.*)',
+  '/signup(.*)' 
+]);
 
-import { createServerClient } from '@supabase/ssr'
-import { NextResponse } from 'next/server'
+export default clerkMiddleware((auth, req) => {
+  const { userId } = auth();
+  const { pathname } = req.nextUrl;
 
-export async function middleware(req) {
-  let supabaseResponse = NextResponse.next({ request: req })
+  // Redirect logged-in users away from auth pages
+  if (userId && (pathname.startsWith('/login') || pathname.startsWith('/signup'))) {
+    return NextResponse.redirect(new URL('/', req.url));
+  }
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        getAll() {
-          return req.cookies.getAll()
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            req.cookies.set(name, value)
-          )
-          supabaseResponse = NextResponse.next({ request: req })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
-        }
-      }
-    }
-  )
-
-  // IMPORTANT: always call getUser not getSession for middleware
-  const { data: { user } } = await supabase.auth.getUser()
-
-  const { pathname } = req.nextUrl
-  const publicRoutes = ['/login', '/home']
-  const isPublic = publicRoutes.some(r => pathname.startsWith(r))
-
-  if (!user && !isPublic) {
+  // Handle unauthenticated users
+  if (!userId && !isPublicRoute(req)) {
     if (pathname === '/') {
-      return NextResponse.redirect(new URL('/home', req.url))
+      return NextResponse.redirect(new URL('/home', req.url));
     }
-    return NextResponse.redirect(new URL('/login', req.url))
+    return NextResponse.redirect(new URL('/login', req.url));
   }
 
-  if (user && pathname.startsWith('/login')) {
-    return NextResponse.redirect(new URL('/', req.url))
-  }
-
-  return supabaseResponse
-}
+  return NextResponse.next();
+});
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|api).*)']
-}
+  matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
+};
