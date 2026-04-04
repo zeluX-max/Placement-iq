@@ -14,8 +14,10 @@ export default function Navbar() {
   const pathname = usePathname();
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.push('/login');
+    // Clerk sign out is handled by the hook
+    // Instead of using supabase.auth.signOut(), we'll let useClerk do it.
+    await window.Clerk?.signOut();
+    router.push('/home');
   };
 
   const navLinks = [
