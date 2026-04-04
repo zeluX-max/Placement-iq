@@ -1,8 +1,8 @@
 'use client'
 
-import { SignIn } from "@clerk/nextjs"
+import { SignUp } from "@clerk/nextjs"
 
-export default function LoginPage() {
+export default function SignupPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#1E293B] flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden transition-all">
       
@@ -15,15 +15,15 @@ export default function LoginPage() {
         </h1>
         <div className="h-1.5 w-12 bg-brand-green mx-auto mt-4 rounded-full" />
         <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.3em] mt-6">
-          Welcome Back
+          N.I.T. Jalandhar
         </p>
       </div>
 
       <div className="w-full max-w-md flex justify-center z-10 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-        <SignIn 
+        <SignUp 
           routing="path" 
-          path="/login"
-          signUpUrl="/signup" 
+          path="/signup"
+          signInUrl="/login" 
           appearance={{
             variables: { colorPrimary: '#22c55e', borderRadius: '1rem' },
             elements: {
