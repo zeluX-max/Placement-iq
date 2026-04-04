@@ -21,8 +21,7 @@ export default function LoginPage() {
 
       <div className="w-full max-w-md flex justify-center z-10 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
         <SignIn 
-          routing="path" 
-          path="/login"
+          routing="hash" 
           signUpUrl="/signup" 
           appearance={{
             variables: { colorPrimary: '#22c55e', borderRadius: '1rem' },
