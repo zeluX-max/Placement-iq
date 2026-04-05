@@ -1,5 +1,5 @@
+import { supabaseServer } from '@/lib/supabase-server'
 import { auth, currentUser } from '@clerk/nextjs/server'
-import { createClient } from '@supabase/supabase-js'
 import crypto from 'crypto'
 
 function clerkIdToUuid(clerkId) {
@@ -16,10 +16,7 @@ function clerkIdToUuid(clerkId) {
 
 export async function POST(req) {
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    );
+    const supabase = await supabaseServer();
 
     const { userId } = await auth()
 
