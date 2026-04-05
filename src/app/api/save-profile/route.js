@@ -1,18 +1,5 @@
 import { supabaseServer } from '@/lib/supabase-server'
 import { auth, currentUser } from '@clerk/nextjs/server'
-import crypto from 'crypto'
-
-function clerkIdToUuid(clerkId) {
-  if (!clerkId) return null;
-  const hash = crypto.createHash('md5').update(clerkId).digest('hex');
-  return [
-    hash.substring(0, 8),
-    hash.substring(8, 12),
-    hash.substring(12, 16),
-    hash.substring(16, 20),
-    hash.substring(20, 32)
-  ].join('-');
-}
 
 export async function POST(req) {
   try {
@@ -23,8 +10,6 @@ export async function POST(req) {
     if (!userId) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
-    const uuid = clerkIdToUuid(userId);
 
     const clerkUser = await currentUser()
     const fullName = clerkUser ? `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() : null;
@@ -38,7 +23,7 @@ export async function POST(req) {
     const { error: insertError } = await supabase
       .from('students')
       .upsert({
-        user_id: uuid,
+        user_id: userId,
         name: fullName || profile.name || 'Anonymous',
         cgpa: profile.cgpa,
         skills: profile.skills || [],
