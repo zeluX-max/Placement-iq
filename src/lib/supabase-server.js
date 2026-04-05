@@ -3,7 +3,7 @@ import { auth } from '@clerk/nextjs/server';
 
 export async function supabaseServer() {
   // 1. Get the Clerk auth context on the server
-  const { getToken } = auth();
+  const { getToken } = await auth();
 
   // 2. Request the special Supabase token from Clerk
   const token = await getToken({ template: 'supabase' });

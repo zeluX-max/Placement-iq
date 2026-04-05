@@ -7,7 +7,7 @@ let groqClient;
 function getGroqClient() {
   if (!groqClient) {
     groqClient = new Groq({
-      apiKey: process.env.GROQ_API_KEY,
+      apiKey: process.env.GROQ_KEY || process.env.GROQ_API_KEY,
     });
   }
 
