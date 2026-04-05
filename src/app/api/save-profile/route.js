@@ -1,13 +1,17 @@
 import { supabaseServer } from '@/lib/supabase-server'
+import { auth, currentUser } from '@clerk/nextjs/server'
 
 export async function POST(req) {
   try {
     const supabase = await supabaseServer()
-    const { data: { session } } = await supabase.auth.getSession()
+    const { userId } = await auth()
 
-    if (!session) {
+    if (!userId) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    const clerkUser = await currentUser()
+    const fullName = clerkUser ? `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() : null;
 
     const { profile, gapAnalysis, studyPlan } = await req.json()
 
@@ -18,8 +22,8 @@ export async function POST(req) {
     const { error: insertError } = await supabase
       .from('students')
       .upsert({
-        user_id: session.user.id,
-        name: session.user.user_metadata?.full_name || profile.name || 'Anonymous',
+        user_id: userId,
+        name: fullName || profile.name || 'Anonymous',
         cgpa: profile.cgpa,
         skills: profile.skills || [],
         ready_companies: gapAnalysis.ready ? gapAnalysis.ready.map(c => c.name) : [],
